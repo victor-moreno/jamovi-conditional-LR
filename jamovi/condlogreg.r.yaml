@@ -1,0 +1,278 @@
+---
+name:  condLogReg
+title: Conditional Logistic Regression
+jrs:   '1.1'
+
+refs:
+    - survival
+    - breslow1978
+
+items:
+    - name: sets
+      title: Matched Sets
+      type: Table
+      description: a table of the composition of the matched sets
+      visible: (setSummary)
+      clearWith:
+        - dep
+        - strata
+        - covs
+        - factors
+        - blocks
+        - refLevels
+      columns:
+        - name: cases
+          title: Cases
+          type: integer
+          superTitle: Per set
+
+        - name: controls
+          title: Controls
+          type: integer
+          superTitle: Per set
+
+        - name: nSets
+          title: Sets
+          type: integer
+
+        - name: nObs
+          title: Observations
+          type: integer
+
+    - name: modelFit
+      title: Model Fit Measures
+      type: Table
+      clearWith:
+        - dep
+        - strata
+        - blocks
+        - ties
+      visible: (dev || aic || bic || pseudoR2:r2mf || pseudoR2:r2cs || pseudoR2:r2n || modelTest)
+
+      columns:
+        - name: model
+          title: "Model"
+          type: text
+
+        - name: dev
+          title: Deviance
+          type: number
+          visible: (dev)
+
+        - name: aic
+          title: AIC
+          type: number
+          visible: (aic)
+
+        - name: bic
+          title: BIC
+          type: number
+          visible: (bic)
+
+        - name: r2mf
+          title: R²<sub>McF</sub>
+          type: number
+          visible: (pseudoR2:r2mf)
+
+        - name: r2cs
+          title: R²<sub>CS</sub>
+          type: number
+          visible: (pseudoR2:r2cs)
+
+        - name: r2n
+          title: R²<sub>N</sub>
+          type: number
+          visible: (pseudoR2:r2n)
+
+        - name: chi
+          title: χ²
+          type: number
+          superTitle: Overall Model Test
+          visible: (modelTest)
+
+        - name: df
+          title: df
+          type: integer
+          superTitle: Overall Model Test
+          visible: (modelTest)
+
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+          superTitle: Overall Model Test
+          visible: (modelTest)
+
+    - name: modelComp
+      title: Model Comparisons
+      type: Table
+      clearWith:
+        - dep
+        - strata
+        - blocks
+        - ties
+
+      columns:
+        - name: model1
+          title: 'Model'
+          content: .
+          type: text
+          superTitle: Comparison
+
+        - name: sep
+          title: ""
+          content: "-"
+          type: text
+          format: narrow
+          superTitle: Comparison
+
+        - name: model2
+          title: 'Model'
+          content: .
+          type: text
+          superTitle: Comparison
+
+        - name: chi
+          title: χ²
+          type: number
+
+        - name: df
+          title: df
+          type: integer
+
+        - name: p
+          title: p
+          type: number
+          format: zto,pvalue
+
+    - name: models
+      title: Model Specific Results
+      type: Array
+      layout: listSelect
+      hideHeadingOnlyChild: true
+      description: an array of model specific results
+      clearWith:
+        - blocks
+      template:
+
+        title: ''
+        type: Group
+        items:
+
+          - name: lrt
+            title: Omnibus Likelihood Ratio Tests
+            type: Table
+            clearWith:
+                - dep
+                - strata
+                - blocks
+                - ties
+            description: a table of likelihood ratio tests
+            visible: (omni)
+            columns:
+
+              - name: term
+                title: "Predictor"
+                type: text
+
+              - name: chi
+                title: χ²
+                type: number
+
+              - name: df
+                title: df
+                type: integer
+
+              - name: p
+                title: p
+                type: number
+                format: zto,pvalue
+
+          - name: coef
+            title: '`Model Coefficients - ${dep}`'
+            type: Table
+            clearWith:
+                - dep
+                - strata
+                - blocks
+                - refLevels
+                - ties
+            description: a table of model coefficients
+            refs: gail1981
+            columns:
+
+              - name: term
+                title: "Predictor"
+                type: text
+
+              - name: est
+                title: Estimate
+                type: number
+
+              - name: lower
+                title: Lower
+                type: number
+                visible: (ci)
+
+              - name: upper
+                title: Upper
+                type: number
+                visible: (ci)
+
+              - name: se
+                title: SE
+                type: number
+
+              - name: z
+                title: Z
+                type: number
+
+              - name: p
+                title: p
+                type: number
+                format: zto,pvalue
+
+              - name: odds
+                title: Odds ratio
+                type: number
+                visible: (OR)
+
+              - name: oddsLower
+                title: Lower
+                type: number
+                visible: (ciOR && OR)
+
+              - name: oddsUpper
+                title: Upper
+                type: number
+                visible: (ciOR && OR)
+
+          - name: assump
+            title: Assumption Checks
+            type: Group
+            items:
+
+            - name: collin
+              title: Collinearity Statistics
+              type: Table
+              description: a table containing the collinearity statistics
+              visible: (collin)
+              refs: fox1992
+              clearWith:
+                - dep
+                - strata
+                - blocks
+                - ties
+              columns:
+                - name: term
+                  title: ''
+                  type: text
+
+                - name: vif
+                  title: VIF
+                  type: number
+
+                - name: tol
+                  title: Tolerance
+                  type: number
+...

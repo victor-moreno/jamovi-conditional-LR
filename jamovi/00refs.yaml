@@ -1,0 +1,39 @@
+---
+refs:
+    survival:
+        type: 'software'
+        author: Therneau, T. M.
+        year: 2026
+        title: 'survival: Survival Analysis'
+        publisher: '[R package]. Retrieved from https://cran.r-project.org/package=survival'
+        url: https://cran.r-project.org/package=survival
+
+    breslow1978:
+        type: 'article'
+        author: Breslow, N. E., Day, N. E., Halvorsen, K. T., Prentice, R. L., & Sabai, C.
+        year: 1978
+        title: Estimation of multiple relative risk functions in matched case-control studies
+        publisher: American Journal of Epidemiology
+        volume: 108
+        pages: 299-307
+        url: https://doi.org/10.1093/oxfordjournals.aje.a112623
+
+    gail1981:
+        type: 'article'
+        author: Gail, M. H., Lubin, J. H., & Rubinstein, L. V.
+        year: 1981
+        title: Likelihood calculations for matched case-control studies and survival studies with tied death times
+        publisher: Biometrika
+        volume: 68
+        pages: 703-707
+        url: https://doi.org/10.1093/biomet/68.3.703
+
+    fox1992:
+        type: 'article'
+        author: Fox, J., & Monette, G.
+        year: 1992
+        title: Generalized collinearity diagnostics
+        publisher: Journal of the American Statistical Association
+        volume: 87
+        pages: 178-183
+        url: https://doi.org/10.1080/01621459.1992.10475190

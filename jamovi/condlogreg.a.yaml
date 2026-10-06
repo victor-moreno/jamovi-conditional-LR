@@ -1,0 +1,266 @@
+---
+name:  condLogReg
+title: Conditional Logistic Regression
+menuGroup: Regression
+menuSubgroup: Logistic Regression
+menuTitle: Conditional (Matched)
+menuSubtitle: Matched case-control
+version: '1.0.0'
+jas: '1.2'
+# rows are matched sets: replicating rows (auto) or case weights do not fit the
+# conditional likelihood, so data weights are ignored
+weightsSupport: 'none'
+
+description:
+    main: >
+        Conditional logistic regression for matched case-control data: the
+        model is fitted by the conditional likelihood within the matched sets,
+        as a Cox model stratified by matched set (the same fit as
+        survival::clogit).
+    R:
+        dontrun: false
+        usage: |
+            dat <- infert
+            dat$case <- factor(dat$case)
+
+            condLogReg(data = dat, dep = case, strata = stratum,
+                       covs = vars(spontaneous, induced),
+                       blocks = list(list("spontaneous", "induced")),
+                       refLevels = list(list(var="case", ref="0")),
+                       OR = TRUE)
+
+
+options:
+    - name: data
+      type: Data
+      description:
+          R: the data as a data frame
+
+    - name: dep
+      type: Variable
+      title: Dependent Variable
+      suggested:
+        - nominal
+      permitted:
+        - factor
+      description:
+          R: >
+            a string naming the dependent variable (case/control status) from
+            `data`, variable must be a factor with two levels; the reference
+            level marks the controls
+
+    - name: strata
+      type: Variable
+      title: Matching Variable
+      suggested:
+        - nominal
+        - id
+      permitted:
+        - factor
+        - numeric
+        - id
+      description:
+          R: >
+            a string naming the variable that identifies the matched sets
+            (strata) in `data`
+
+    - name: covs
+      title: Covariates
+      type: Variables
+      suggested:
+        - continuous
+      permitted:
+        - numeric
+      default:
+      description:
+          R: a vector of strings naming the covariates from `data`
+
+    - name: factors
+      title: Factors
+      type: Variables
+      rejectUnusedLevels: true
+      suggested:
+        - nominal
+      permitted:
+        - factor
+      default:
+      description:
+          R: a vector of strings naming the fixed factors from `data`
+
+    - name: blocks
+      title: Blocks
+      type: Array
+      default: [[]]
+      template:
+          type: Terms
+      description:
+          R: >
+            a list containing vectors of strings that name the
+            predictors that are added to the model. The elements
+            are added to the model according to their order in the
+            list
+
+    - name: refLevels
+      title: Reference Levels
+      type: Array
+      default:
+      template:
+          type: Group
+          elements:
+              - name: var
+                type: Variable
+              - name: ref
+                type: Level
+      description:
+          R: >
+            a list of lists specifying reference levels of the dependent variable
+            and all the factors
+
+    - name: ties
+      title: Likelihood
+      type: List
+      options:
+          - name: exact
+            title: Exact conditional
+          - name: efron
+            title: Efron approximation
+          - name: breslow
+            title: Breslow approximation
+      default: exact
+      description:
+          R: >
+            `'exact'` (default), `'efron'` or `'breslow'`; the conditional
+            likelihood, exact or approximated. All three are identical with
+            one case per matched set; the approximations are faster for sets
+            with many cases
+
+    - name: setSummary
+      title: Matched sets
+      type: Bool
+      default: true
+      description:
+          R: >
+            `TRUE` (default) or `FALSE`, provide a table of the composition
+            (cases and controls) of the matched sets
+
+    - name: modelTest
+      title: Overall model test
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide the model comparison between
+            the models and the NULL model
+
+    - name: dev
+      title: Deviance
+      type: Bool
+      default: true
+      description:
+          R: >
+            `TRUE` (default) or `FALSE`, provide the deviance (-2 conditional
+            log-likelihood) for the models
+
+    - name: aic
+      title: AIC
+      type: Bool
+      default: true
+      description:
+          R: >
+            `TRUE` (default) or `FALSE`, provide Akaike's Information Criterion (AIC)
+            for the models
+
+    - name: bic
+      title: BIC
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide Bayesian Information Criterion (BIC)
+            for the models
+
+    - name: pseudoR2
+      title: Pseudo R²
+      type: NMXList
+      options:
+          - name: r2mf
+            title: McFadden's R²
+          - name: r2cs
+            title: Cox & Snell's R²
+          - name: r2n
+            title: Nagelkerke's R²
+      default:
+          - r2mf
+      description:
+          R: >
+            one or more of `'r2mf'`, `'r2cs'`, or `'r2n'`;
+            use McFadden's, Cox & Snell, and Nagelkerke pseudo-R²,
+            respectively
+
+    - name: omni
+      title: Likelihood ratio tests
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide the omnibus likelihood ratio tests
+            for the predictors
+
+    - name: ci
+      title: Confidence interval
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide a confidence interval
+            for the model coefficient estimates
+
+    - name: ciWidth
+      title: Confidence level
+      type: Number
+      min: 50
+      max: 99.9
+      default: 95
+      description:
+          R: >
+            a number between 50 and 99.9 (default: 95) specifying the confidence
+            interval width
+
+    - name: OR
+      title: Odds ratio
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide the exponential of the log-odds
+            ratio estimate, or the odds ratio estimate
+
+    - name: ciOR
+      title: Confidence interval
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide a confidence interval
+            for the model coefficient odds ratio estimates
+
+    - name: ciWidthOR
+      title: Confidence level
+      type: Number
+      min: 50
+      max: 99.9
+      default: 95
+      description:
+          R: >
+            a number between 50 and 99.9 (default: 95) specifying the confidence
+            interval width
+
+    - name: collin
+      title: Collinearity statistics
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide VIF and tolerance
+            collinearity statistics
+...

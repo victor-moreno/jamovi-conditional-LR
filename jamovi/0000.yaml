@@ -1,0 +1,38 @@
+---
+title: Conditional Logistic Regression
+name: condLogReg
+version: 0.1.0
+jms: '1.0'
+authors:
+  - V. Moreno
+maintainer: V. Moreno <v.moreno@iconcologia.net>
+date: '2026-10-06'
+type: R
+description: >-
+  Conditional logistic regression for matched case-control studies: a clone of
+  jmv's Binomial Logistic Regression with a matching variable, fitted by the
+  conditional likelihood (Cox model stratified by matched set, as
+  survival::clogit).
+analyses:
+  - title: Conditional Logistic Regression
+    name: condLogReg
+    ns: condLogReg
+    category: analyses
+    menuGroup: Regression
+    menuSubgroup: Logistic Regression
+    menuTitle: Conditional (Matched)
+    menuSubtitle: Matched case-control
+    description: >
+      Conditional logistic regression for matched case-control data: the model
+      is fitted by the conditional likelihood within the matched sets, as a Cox
+      model stratified by matched set (the same fit as survival::clogit).
+datasets:
+  - name: Infertility after abortion (matched)
+    path: infert.csv
+    description: >-
+      Matched case-control study (R datasets::infert): 83 sets of a case and up
+      to 2 controls, matched on age, parity and education.
+usesNative: false
+minApp: 2.3.0
+
+...

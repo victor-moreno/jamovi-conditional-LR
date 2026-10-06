@@ -1,0 +1,5 @@
+# Hand-maintained (see build-install-ship.md in the jamovi-skill): jamovi
+# reaches the analysis via namespace[[paste0(name, "Class")]], so the export
+# only serves condLogReg::condLogReg(...) from plain R (tests, tools/smoke.R).
+export(condLogReg)
+importFrom(jmvcore,.)

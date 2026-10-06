@@ -1,0 +1,24 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.tmp
+.cache
+.venv
+.envrc
+.env
+.claude
+node_modules
+*.jmo
+*.tar.gz
+*.zip
+dist/
+build/
+.jmc-docker.jmo
+# local only, never pushed: development notes and plans (task_plan, findings, progress)
+documents/
+# tutorial: Quarto source is versioned; renders and caches are not (docs/ holds the site)
+tutorial/_site/
+tutorial/.quarto/
+tutorial/_freeze/
+tutorial/**/*_files/
