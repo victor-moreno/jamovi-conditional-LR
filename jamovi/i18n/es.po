@@ -1,0 +1,631 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-07-26 12:08:06+01000\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Language: es\n"
+
+#: R/condlogreg.b.R
+msgid "{ciWidth}% CI"
+msgstr "IC {ciWidth}%"
+
+#: R/utils.R
+msgid "{item1} and {item2}"
+msgstr "{item1} y {item2}"
+
+#: R/utils.R
+msgid "{list}, {nextItem}"
+msgstr "{list}, {nextItem}"
+
+#: R/utils.R
+msgid "{list}, and {lastItem}"
+msgstr "{list}, y {lastItem}"
+
+#: R/condlogreg.b.R
+msgid "{n} uninformative sets (no case or no control left)"
+msgstr "{n} conjuntos no informativos (sin caso o sin control)"
+
+#: R/condlogreg.b.R
+msgid ""
+"{sets} matched sets, {inf} informative. Sets without a case or without a "
+"control do not contribute to the conditional likelihood."
+msgstr "{sets} conjuntos emparejados, {inf} informativos. Los conjuntos sin caso o sin control no contribuyen a la verosimilitud condicional."
+
+#: condLogReg/ui[8][0][0]/ciWidth.suffix
+msgid "%"
+msgstr "%"
+
+#: condLogReg/results/models.template/coef.title
+msgid "`Model Coefficients - ${dep}`"
+msgstr "`Coeficientes del Modelo - ${dep}`"
+
+#: condLogReg/results/models.template/assump/collin.description
+msgid "a table containing the collinearity statistics"
+msgstr "una tabla que contiene las estadísticas de colinealidad"
+
+#: condLogReg/results/models.template/lrt.description
+msgid "a table of likelihood ratio tests"
+msgstr "una tabla de pruebas de razón de verosimilitudes"
+
+#: condLogReg/results/models.template/coef.description
+msgid "a table of model coefficients"
+msgstr "una tabla de coeficientes del modelo"
+
+#: condLogReg/results/sets.description
+msgid "a table of the composition of the matched sets"
+msgstr "una tabla de la composición de los conjuntos emparejados"
+
+#: condLogReg/results/desc.description
+msgid ""
+"a table of the covariates (mean ± SD) and factors (n, %) by the levels of "
+"the dependent variable"
+msgstr "una tabla de las covariables (media ± DE) y factores (n, %) según los niveles de la variable dependiente"
+
+#: R/condlogreg.b.R
+msgid "A term with no estimable coefficient (e.g. a matching factor) is not tested"
+msgstr "No se contrasta un término sin coeficiente estimable (p. ej., un factor de emparejamiento)"
+
+#: condLogReg/ui[1]/modelSupplier[0]/blocks.addButton
+msgid "Add New Block"
+msgstr "Añadir Nuevo Bloque"
+
+#: condLogReg/options/aic.title
+#: condLogReg/results/modelFit.columns.title
+msgid "AIC"
+msgstr "AIC"
+
+#: R/condlogreg.b.R
+msgid ""
+"All {n} rows with the dependent and matching variables known; the models use "
+"only the rows complete for every variable."
+msgstr "Las {n} filas con la variable dependiente y la de emparejamiento conocidas; los modelos solo usan las filas completas en todas las variables."
+
+#: condLogReg/results/models.description
+msgid "an array of model specific results"
+msgstr "una matriz de resultados específicos del modelo"
+
+#: condLogReg/ui[6].label
+#: condLogReg/results/models.template/assump.title
+msgid "Assumption Checks"
+msgstr "Comprobaciones de Supuestos"
+
+#: condLogReg/options/bic.title
+#: condLogReg/results/modelFit.columns.title
+msgid "BIC"
+msgstr "BIC"
+
+#: jamovi/js/condlogreg.events.js:4
+#: jamovi/js/condlogreg.events.js:46
+msgid "Block {0}"
+msgstr "Bloque {0}"
+
+#: condLogReg/ui[1]/modelSupplier[0]/blocks.template/blockName.label
+msgid "Block 1"
+msgstr "Bloque 1"
+
+#: condLogReg/options/blocks.title
+msgid "Blocks"
+msgstr "Bloques"
+
+#: condLogReg/options/ties/breslow.title
+msgid "Breslow approximation"
+msgstr "Aproximación de Breslow"
+
+#: condLogReg/results/sets.columns.title
+#: condLogReg/results/desc.columns.title
+msgid "Cases"
+msgstr "Casos"
+
+#: condLogReg/options/collin.title
+msgid "Collinearity statistics"
+msgstr "Estadísticas de colinealidad"
+
+#: condLogReg/results/models.template/assump/collin.title
+msgid "Collinearity Statistics"
+msgstr "Estadísticas de Colinealidad"
+
+#: condLogReg/results/modelComp.columns.superTitle
+msgid "Comparison"
+msgstr "Comparación"
+
+#: package/analyses/condLogReg.menuTitle
+#: condLogReg/options.menuTitle
+msgid "Conditional (Matched)"
+msgstr "Condicional (emparejada)"
+
+#: package.title
+#: package/analyses/condLogReg.title
+#: condLogReg/options.title
+#: condLogReg/ui.title
+#: condLogReg/results.title
+msgid "Conditional Logistic Regression"
+msgstr "Regresión logística condicional"
+
+#: package/analyses/condLogReg.description
+#: condLogReg/options.description.main
+msgid ""
+"Conditional logistic regression for matched case-control data: the model is "
+"fitted by the conditional likelihood within the matched sets, as a Cox model "
+"stratified by matched set (the same fit as survival::clogit)."
+msgstr "Regresión logística condicional para datos de casos y controles emparejados: el modelo se ajusta por la verosimilitud condicional dentro de los conjuntos emparejados, como un modelo de Cox estratificado por conjunto (el mismo ajuste que survival::clogit)."
+
+#: package.description
+msgid ""
+"Conditional logistic regression for matched case-control studies: a clone of "
+"jmv's Binomial Logistic Regression with a matching variable, fitted by the "
+"conditional likelihood (Cox model stratified by matched set, as "
+"survival::clogit)."
+msgstr "Regresión logística condicional para estudios de casos y controles emparejados: un clon de la regresión logística binomial de jmv con una variable de emparejamiento, ajustada por la verosimilitud condicional (modelo de Cox estratificado por conjunto, como survival::clogit)."
+
+#: condLogReg/ui[8][0][0]/ciWidth.label
+msgid "Confidence interval"
+msgstr "Intervalo de confianza"
+
+#: condLogReg/options/ciWidth.title
+msgid "Confidence level"
+msgstr "Nivel de confianza"
+
+#: condLogReg/results/sets.columns.title
+#: condLogReg/results/desc.columns.title
+msgid "Controls"
+msgstr "Controles"
+
+#: condLogReg/ui[3]/covScales.columns.label
+msgid "Covariate"
+msgstr "Covariable"
+
+#: condLogReg/options/covScales.title
+#: condLogReg/ui[3].label
+msgid "Covariate Scaling"
+msgstr "Escala de las covariables"
+
+#: condLogReg/options/covs.title
+#: condLogReg/ui[0][2].label
+msgid "Covariates"
+msgstr "Covariables"
+
+#: R/condlogreg.b.R
+msgid ""
+"Covariates: OR per one-unit increase, or per the unit chosen in Covariate "
+"Scaling (SD of the rows of the model)."
+msgstr "Covariables: OR por aumento de una unidad, o por la unidad elegida en la escala de las covariables (DE de las filas del modelo)."
+
+#: condLogReg/options/pseudoR2/r2cs.title
+msgid "Cox & Snell's R²"
+msgstr "R² de Cox y Snell"
+
+#: condLogReg/options/dep.title
+msgid "Dependent Variable"
+msgstr "Variable Dependiente"
+
+#: condLogReg/options/descTable.title
+msgid "Descriptive table"
+msgstr "Tabla descriptiva"
+
+#: condLogReg/ui[5].label
+#: condLogReg/results/desc.title
+msgid "Descriptives"
+msgstr "Descriptivas"
+
+#: condLogReg/options/dev.title
+#: condLogReg/results/modelFit.columns.title
+msgid "Deviance"
+msgstr "Desvianza"
+
+#: condLogReg/results/modelFit.columns.title
+#: condLogReg/results/modelComp.columns.title
+#: condLogReg/results/models.template/lrt.columns.title
+msgid "df"
+msgstr "gl"
+
+#: condLogReg/ui[1]/modelSupplier[0]/blocks.template/blockList.ghostText
+msgid "drag variables here"
+msgstr "arrastrar variables aquí"
+
+#: condLogReg/options/ties/efron.title
+msgid "Efron approximation"
+msgstr "Aproximación de Efron"
+
+#: package/datasets/Endometrialcancerandoestrogens(matched).name
+msgid "Endometrial cancer and oestrogens (matched)"
+msgstr "Cáncer de endometrio y estrógenos (emparejado)"
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "Estimate"
+msgstr "Estimador"
+
+#: condLogReg/options/ties/exact.title
+msgid "Exact conditional"
+msgstr "Condicional exacta"
+
+#: condLogReg/options/factors.title
+#: condLogReg/ui[0][3].label
+msgid "Factors"
+msgstr "Factores"
+
+#: R/condlogreg.b.R
+msgid ""
+"Factors: OR against the reference level (OR = 1); on the reference row of a "
+"factor with three or more levels, p of the likelihood ratio test of the "
+"whole factor."
+msgstr "Factores: OR frente al nivel de referencia (OR = 1); en la fila de referencia de un factor con tres o más niveles, p de la prueba de razón de verosimilitudes del factor completo."
+
+#: condLogReg/ui[7][0][0][0].label
+msgid "Fit Measures"
+msgstr "Medidas de Ajuste"
+
+#: R/condlogreg.b.R
+msgid "For terms with more than one coefficient the generalised VIF is shown"
+msgstr "Para los términos con más de un coeficiente se muestra el VIF generalizado"
+
+#: condLogReg/options/forest.title
+#: condLogReg/results/models.template/forest.title
+msgid "Forest plot"
+msgstr "Gráfico de bosque"
+
+#: package/datasets/Infertilityafterabortion(matched).name
+msgid "Infertility after abortion (matched)"
+msgstr "Infertilidad tras aborto (emparejado)"
+
+#: condLogReg/options/ties.title
+msgid "Likelihood"
+msgstr "Verosimilitud"
+
+#: condLogReg/options/omni.title
+msgid "Likelihood ratio tests"
+msgstr "Prueba de la Razón de Verosimilitudes"
+
+#: condLogReg/options/coefDetails.title
+msgid "Log odds ratio, SE and Z"
+msgstr "Log odds ratio, EE y Z"
+
+#: package/analyses/condLogReg.menuSubgroup
+#: condLogReg/options.menuSubgroup
+msgid "Logistic Regression"
+msgstr "Regresión logística"
+
+#: package/datasets/Endometrialcancerandoestrogens(matched).description
+msgid ""
+"Los Angeles study (Breslow & Day 1980; Epi::bdendo): 63 cases, 4 controls "
+"each, matched on age, marital status and residence."
+msgstr "Estudio de Los Ángeles (Breslow y Day 1980; Epi::bdendo): 63 casos, 4 controles cada uno, emparejados por edad, estado civil y residencia."
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "Lower"
+msgstr "Inferior"
+
+#: package/analyses/condLogReg.menuSubtitle
+#: condLogReg/options.menuSubtitle
+msgid "Matched case-control"
+msgstr "Casos y controles emparejados"
+
+#: package/datasets/Infertilityafterabortion(matched).description
+msgid ""
+"Matched case-control study (R datasets::infert): 83 sets of a case and up to "
+"2 controls, matched on age, parity and education."
+msgstr "Estudio de casos y controles emparejados (R datasets::infert): 83 conjuntos de un caso y hasta 2 controles, emparejados por edad, paridad y estudios."
+
+#: condLogReg/options/setSummary.title
+msgid "Matched sets"
+msgstr "Conjuntos emparejados"
+
+#: condLogReg/results/sets.title
+msgid "Matched Sets"
+msgstr "Conjuntos emparejados"
+
+#: condLogReg/ui[4].label
+msgid "Matching"
+msgstr "Emparejamiento"
+
+#: condLogReg/options/strata.title
+#: condLogReg/ui[0][1].label
+msgid "Matching Variable"
+msgstr "Variable de emparejamiento"
+
+#: condLogReg/options/pseudoR2/r2mf.title
+msgid "McFadden's R²"
+msgstr "R² de McFadden"
+
+#: R/condlogreg.b.R
+msgid "Mean ± SD"
+msgstr "Media ± DE"
+
+#: R/condlogreg.b.R
+msgid ""
+"Mean ± SD for covariates; n (%) for factor levels, with percentages of the "
+"known values within each column; for the dependent variable and missing "
+"values, of the column total."
+msgstr "Media ± DE para las covariables; n (%) para los niveles de los factores, con porcentajes de los valores conocidos en cada columna; para la variable dependiente y los valores perdidos, del total de la columna."
+
+#: R/condlogreg.b.R
+msgid "Missing"
+msgstr "Perdidos"
+
+#: R/condlogreg.b.R
+#: condLogReg/results/modelFit.columns.title
+#: condLogReg/results/modelComp.columns.title
+msgid "Model"
+msgstr "Modelo"
+
+#: condLogReg/ui[1].label
+msgid "Model Builder"
+msgstr "Constructor del Modelo"
+
+#: condLogReg/ui[8].label
+msgid "Model Coefficients"
+msgstr "Coeficientes del Modelo"
+
+#: condLogReg/results/modelComp.title
+msgid "Model Comparisons"
+msgstr "Comparación de Modelos"
+
+#: condLogReg/ui[7].label
+msgid "Model Fit"
+msgstr "Ajuste del Modelo"
+
+#: condLogReg/results/modelFit.title
+msgid "Model Fit Measures"
+msgstr "Medidas de Ajuste del Modelo"
+
+#: R/condlogreg.b.R
+msgid "Model fit warning:"
+msgstr "Aviso del ajuste del modelo:"
+
+#: condLogReg/results/models.title
+msgid "Model Specific Results"
+msgstr "Resultados Específicos del Modelo"
+
+#: R/condlogreg.b.R
+msgid "Models estimated using N={n} observations in {sets} matched sets"
+msgstr "Modelos estimados con N={n} observaciones en {sets} conjuntos emparejados"
+
+#: R/clr_forest.R
+#: R/condlogreg.b.R
+msgid "Multivariable"
+msgstr "Multivariable"
+
+#: R/condlogreg.b.R
+msgid "Multivariable ORs are adjusted for the other variables in the model."
+msgstr "Las OR multivariables están ajustadas por las demás variables del modelo."
+
+#: R/condlogreg.b.R
+msgid "n (%)"
+msgstr "n (%)"
+
+#: condLogReg/options/pseudoR2/r2n.title
+msgid "Nagelkerke's R²"
+msgstr "R² de Nagelkerke"
+
+#: package/datasets/Nestedcase-controlstudy(simulated).name
+msgid "Nested case-control study (simulated)"
+msgstr "Estudio de casos y controles anidado (simulado)"
+
+#: R/condlogreg.b.R
+msgid ""
+"No matched set contains both a case and a control, so the conditional "
+"likelihood is empty. Check the matching variable."
+msgstr "Ningún conjunto emparejado contiene a la vez un caso y un control, así que la verosimilitud condicional está vacía. Revise la variable de emparejamiento."
+
+#: R/condlogreg.b.R
+msgid ""
+"Not estimable: {terms}. A predictor that does not vary within the matched "
+"sets (e.g. a matching variable) or that is collinear with others cannot be "
+"estimated by conditional logistic regression."
+msgstr "No estimable: {terms}. Un predictor que no varía dentro de los conjuntos emparejados (p. ej., una variable de emparejamiento) o que es colineal con otros no puede estimarse con regresión logística condicional."
+
+#: condLogReg/results/sets.columns.title
+msgid "Observations"
+msgstr "Observaciones"
+
+#: condLogReg/ui[3]/covScales.columns.label
+msgid "Odds ratio"
+msgstr "Odds ratio"
+
+#: R/clr_forest.R
+msgid "Odds ratio (log scale)"
+msgstr "Odds ratio (escala logarítmica)"
+
+#: condLogReg/ui[8][0][0].label
+msgid "Odds Ratios"
+msgstr "Odds ratios"
+
+#: R/condlogreg.b.R
+msgid ""
+"Odds ratios (OR) of \"{dep} = {level1}\" vs. \"{dep} = {level2}\" within the "
+"matched sets, with {ciWidth}% confidence intervals."
+msgstr "Odds ratios (OR) de \"{dep} = {level1}\" frente a \"{dep} = {level2}\" dentro de los conjuntos emparejados, con intervalos de confianza del {ciWidth}%."
+
+#: condLogReg/results/models.template/lrt.title
+msgid "Omnibus Likelihood Ratio Tests"
+msgstr "Prueba Omnibus de Razón de Verosimilitud"
+
+#: condLogReg/ui[8][0][1].label
+msgid "Omnibus Tests"
+msgstr "Pruebas Omnibus"
+
+#: condLogReg/ui[9].label
+msgid "Options"
+msgstr "Opciones"
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "OR"
+msgstr "OR"
+
+#: R/clr_forest.R
+msgid "OR (95% CI)"
+msgstr "OR (IC 95%)"
+
+#: R/clr_forest.R
+msgid "OR uni | multi"
+msgstr "OR uni | multi"
+
+#: condLogReg/options/modelTest.title
+msgid "Overall model test"
+msgstr "Prueba del modelo global"
+
+#: condLogReg/results/modelFit.columns.superTitle
+msgid "Overall Model Test"
+msgstr "Prueba Global del Modelo"
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "p trend"
+msgstr "p tendencia"
+
+#: R/condlogreg.b.R
+msgid ""
+"p trend: the levels scored 1, 2, 3, ... in their order (Wald test); the "
+"multivariable trend keeps the other variables of the model."
+msgstr "p tendencia: niveles puntuados 1, 2, 3, ... en su orden (prueba de Wald); la tendencia multivariable mantiene las demás variables del modelo."
+
+#: R/condlogreg.b.R
+#: condLogReg/options/covScales.template/scale/sd.title
+msgid "per 1 SD"
+msgstr "por 1 DE"
+
+#: R/condlogreg.b.R
+#: condLogReg/options/covScales.template/scale/ten.title
+msgid "per 10 units"
+msgstr "por 10 unidades"
+
+#: R/condlogreg.b.R
+#: condLogReg/options/covScales.template/scale/hundred.title
+msgid "per 100 units"
+msgstr "por 100 unidades"
+
+#: R/condlogreg.b.R
+#: condLogReg/options/covScales.template/scale/thousand.title
+msgid "per 1000 units"
+msgstr "por 1000 unidades"
+
+#: R/condlogreg.b.R
+msgid "per SD ({sd})"
+msgstr "por DE ({sd})"
+
+#: condLogReg/results/sets.columns.superTitle
+msgid "Per set"
+msgstr "Por conjunto"
+
+#: R/condlogreg.b.R
+#: condLogReg/options/covScales.template/scale/unit.title
+msgid "per unit"
+msgstr "por unidad"
+
+#: condLogReg/results/models.template/lrt.columns.title
+msgid "Predictor"
+msgstr "Predictor"
+
+#: condLogReg/ui[1]/modelSupplier.label
+msgid "Predictors"
+msgstr "Predictores"
+
+#: condLogReg/options/pseudoR2.title
+#: condLogReg/ui[7][0][1]/pseudoR2.label
+msgid "Pseudo R²"
+msgstr "Pseudo R²"
+
+#: condLogReg/results/modelFit.columns.title
+msgid "R²<sub>CS</sub>"
+msgstr "R²<sub>CS</sub>"
+
+#: condLogReg/results/modelFit.columns.title
+msgid "R²<sub>McF</sub>"
+msgstr "R²<sub>McF</sub>"
+
+#: condLogReg/results/modelFit.columns.title
+msgid "R²<sub>N</sub>"
+msgstr "R²<sub>N</sub>"
+
+#: R/clr_forest.R
+msgid "Reference"
+msgstr "Referencia"
+
+#: condLogReg/ui[2]/refLevels.columns.label
+msgid "Reference Level"
+msgstr "Nivel de Referencia"
+
+#: condLogReg/options/refLevels.title
+#: condLogReg/ui[2].label
+msgid "Reference Levels"
+msgstr "Niveles de Referencia"
+
+#: package/analyses/condLogReg.menuGroup
+#: condLogReg/options.menuGroup
+msgid "Regression"
+msgstr "Regresión"
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "SE"
+msgstr "EE"
+
+#: condLogReg/results/sets.columns.title
+msgid "Sets"
+msgstr "Conjuntos"
+
+#: condLogReg/options/showNotes.title
+msgid "Show notes"
+msgstr "Mostrar notas"
+
+#: package/datasets/Nestedcase-controlstudy(simulated).description
+msgid ""
+"SIMULATED: 200 cases with up to 4 controls matched on sex and age group; "
+"smoking, coffee, activity. True ORs in the tutorial."
+msgstr "SIMULADO: 200 casos con hasta 4 controles emparejados por sexo y grupo de edad; tabaco, café, actividad. OR verdaderas en el tutorial."
+
+#: R/condlogreg.b.R
+msgid ""
+"The dependent variable '{}' has more than two levels; conditional logistic "
+"regression can only be performed on dependent variables with two levels "
+"(case and control)."
+msgstr "La variable dependiente '{}' tiene más de dos niveles; la regresión logística condicional solo puede hacerse con variables dependientes de dos niveles (caso y control)."
+
+#: R/utils.R
+msgid ""
+"The specified reference level was not found for the following variable(s): "
+"{vars}. Defaulting to the first available level. To use a custom reference "
+"level, ensure the defined reference level is available in the data."
+msgstr "El nivel (categoria) de referencia no se ha encontrado para la(s) siguiente(s) variable(s): {vars}. Se pasa por defecto a considerar el primer nivel disponible. Para usar un nivel de referencia específico, asegurar que el nivel de referencia definido está disponible en los datos."
+
+#: condLogReg/results/models.template/assump/collin.columns.title
+msgid "Tolerance"
+msgstr "Tolerancia"
+
+#: condLogReg/results/desc.columns.title
+msgid "Total"
+msgstr "Total"
+
+#: condLogReg/options/trend.title
+msgid "Trend test (factors with 3+ levels)"
+msgstr "Prueba de tendencia (factores con 3+ niveles)"
+
+#: R/clr_forest.R
+#: condLogReg/results/models.template/coef.columns.superTitle
+msgid "Univariable"
+msgstr "Univariable"
+
+#: condLogReg/options/uniMulti.title
+msgid "Univariable and multivariable"
+msgstr "Univariable y multivariable"
+
+#: R/condlogreg.b.R
+msgid "Univariable: each variable alone, on the same rows as the model."
+msgstr "Univariable: cada variable sola, en las mismas filas que el modelo."
+
+#: condLogReg/results/models.template/coef.columns.title
+msgid "Upper"
+msgstr "Superior"
+
+#: condLogReg/ui[2]/refLevels.columns.label
+msgid "Variable"
+msgstr "Variable"
+
+#: condLogReg/results/models.template/assump/collin.columns.title
+msgid "VIF"
+msgstr "VIF"
+
+#: R/condlogreg.b.R
+msgid ""
+"With interactions, main-effect ORs apply at the reference level (or 0) of "
+"the interacting variable."
+msgstr "Con interacciones, las OR de los efectos principales corresponden al nivel de referencia (o 0) de la variable que interactúa."
