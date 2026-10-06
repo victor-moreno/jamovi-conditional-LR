@@ -51,7 +51,8 @@ test_that("results serialise as jamovi sends them", {
     d <- infertData()
     opts <- condLogRegOptions$new(dep = "case", strata = "stratum", covs = "induced",
                                   factors = "spont", blocks = list(list("induced", "spont")),
-                                  omni = TRUE, collin = TRUE)
+                                  omni = TRUE, collin = TRUE, uniMulti = TRUE, trend = TRUE,
+                                  forest = TRUE, descTable = TRUE, showNotes = TRUE)
     an <- condLogRegClass$new(options = opts, data = d, datasetId = "d",
                               analysisId = "1", revision = 1)
     an$init()

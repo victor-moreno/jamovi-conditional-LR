@@ -3,3 +3,4 @@
 # only serves condLogReg::condLogReg(...) from plain R (tests, tools/smoke.R).
 export(condLogReg)
 importFrom(jmvcore,.)
+importFrom(ggplot2,.data)

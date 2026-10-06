@@ -3,16 +3,18 @@ library(survival)
 test_that("coefficients, SEs and CIs match survival::clogit", {
     d <- infertData()
     r <- runClr(d, covs = c("spontaneous", "induced"),
-                blocks = list(list("spontaneous", "induced")),
-                ci = TRUE, OR = TRUE, ciOR = TRUE)
+                blocks = list(list("spontaneous", "induced")), coefDetails = TRUE)
     cl <- clogit(case == "1" ~ spontaneous + induced + strata(stratum), data = d)
     tb <- coefDF(r)
     expect_equal(tb$est, unname(coef(cl)), tolerance = 1e-8)
     expect_equal(tb$se, unname(sqrt(diag(vcov(cl)))), tolerance = 1e-8)
-    expect_equal(tb$odds, unname(exp(coef(cl))), tolerance = 1e-8)
+    expect_equal(tb$or, unname(exp(coef(cl))), tolerance = 1e-8)
     ci <- confint(cl)
-    expect_equal(tb$lower, unname(ci[, 1]), tolerance = 1e-8)
-    expect_equal(tb$oddsUpper, unname(exp(ci[, 2])), tolerance = 1e-8)
+    expect_equal(tb$lower, unname(exp(ci[, 1])), tolerance = 1e-8)
+    expect_equal(tb$upper, unname(exp(ci[, 2])), tolerance = 1e-8)
+    r90 <- runClr(d, covs = c("spontaneous", "induced"),
+                  blocks = list(list("spontaneous", "induced")), ciWidth = 90)
+    expect_equal(coefDF(r90)$lower, unname(exp(confint(cl, level = 0.9)[, 1])), tolerance = 1e-8)
     expect_equal(tb$p, unname(summary(cl)$coefficients[, 5]), tolerance = 1e-8)
 })
 

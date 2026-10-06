@@ -2,7 +2,9 @@
 # variable defines the matched sets, the models are conditional logistic
 # regressions (Cox models stratified by matched set, R/clr_core.R) instead of
 # glm(), there is no intercept, and the parts that need absolute probabilities
-# (marginal means, prediction, saved values) are gone.
+# (marginal means, prediction, saved values) are gone. The coefficient table,
+# the univariable/multivariable option, the trend test, the forest plot and
+# the notes switch follow the prognosis module's Cox regression instead of jmv.
 #' @importFrom jmvcore .
 condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
     "condLogRegClass",
@@ -52,18 +54,6 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             return(private$.VIF)
         },
-        CICoefEst = function() {
-            if (is.null(private$.CICoefEst))
-                private$.CICoefEst <- private$.computeCICoefEst()
-
-            return(private$.CICoefEst)
-        },
-        CICoefEstOR = function() {
-            if (is.null(private$.CICoefEstOR))
-                private$.CICoefEstOR <- private$.computeCICoefEst(type="OR")
-
-            return(private$.CICoefEstOR)
-        },
         refLevels = function() {
             if (is.null(private$.refLevels)) {
                 factors <- c(self$options$dep, self$options$factors)
@@ -89,11 +79,12 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .fitMeasures = NULL,
         .lrtModelTerms = NULL,
         .VIF = NULL,
-        .CICoefEst = NULL,
-        .CICoefEstOR = NULL,
-        .rowNamesModel = NULL,
         .levelsDep = NULL,
         .refLevels = NULL,
+        .uniFits = list(),
+        .coefValues = list(),
+        .blankCoef = list(or_u='', lower_u='', upper_u='', p_u='', ptrend_u='',
+                          or='', lower='', upper='', p='', ptrend='', est='', se='', z=''),
 
         #### Init + run functions ----
         .init = function() {
@@ -115,7 +106,6 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$.errorCheck()
             private$.checkSets()
             private$.populateSetsTable()
-            private$.populateDescTable()
 
             if (self$nModels < 1 || length(self$options$blocks[[1]]) == 0)
                 return()
@@ -124,6 +114,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$.populateModelCompTable()
             private$.populateLrtTables()
             private$.populateCoefTables()
+            private$.populateForest()
             private$.populateCollinearityTable()
         },
 
@@ -137,74 +128,86 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             return(models)
         },
-        .computeCICoefEst = function(type="LOR") {
-            if (type == "OR")
-                level <- self$options$ciWidthOR/100
-            else
-                level <- self$options$ciWidth/100
-
-            ci <- list()
-            for (i in seq_along(self$models)) {
-                ci[[i]] <- clrConfint(self$models[[i]], level=level)
-                if (type == "OR")
-                    ci[[i]] <- exp(ci[[i]])
-            }
-            return(ci)
+        # univariable fit of one variable, on the rows of the models; cached
+        # across the models of the blocks
+        .uniFit = function(var) {
+            if (is.null(private$.uniFits[[var]]))
+                private$.uniFits[[var]] <- clrFit(
+                    jmvcore::toB64(var), self$dataProcessed, self$options$ties)
+            private$.uniFits[[var]]
+        },
+        # level order (1, 2, 3, ...) of a factor on the rows of the models, as
+        # the user ordered the levels (dataProcessed has the reference first)
+        .trendScores = function(factor) {
+            rows <- match(rownames(self$dataProcessed), rownames(self$data))
+            x <- self$data[[factor]]
+            match(as.character(x), levels(x))[rows]
         },
 
         #### Init tables/plots functions ----
         .initDescTable = function() {
-            if ( ! self$options$descTable)
+            if ( ! self$options$descTable || is.null(self$options$dep))
                 return()
 
-            # added to jmv's logRegBin: covariates and factor levels by
-            # case/control status, plus the frequencies of the dependent
-            # variable; factor levels come from the data header, so all rows
-            # exist in .init()
+            # added to jmv's logRegBin. The rows depend on the values (a
+            # Missing row only for a variable with missing values), and
+            # .init() gets only the data header from jamovi, so the dataset
+            # is read here (as the prognosis module does); the table is
+            # filled here as well, all in one place
+            if (nrow(self$data) == 0)
+                private$.data <- self$readDataset()
+            data <- self$data
             table <- self$results$desc
             dep <- self$options$dep
+            strata <- self$options$strata
 
-            if ( ! is.null(dep)) {
-                depLevels <- private$.getLevelsDep()
-                table$getColumn('ctrl')$setTitle(depLevels$ref)
-                table$getColumn('cases')$setTitle(depLevels$other)
-                table$getColumn('ctrl')$setSuperTitle(dep)
-                table$getColumn('cases')$setSuperTitle(dep)
-                table$addRow(rowKey='.dep', values=list(var=dep, level=.('n (%)')))
-            }
+            depLevels <- private$.getLevelsDep()
+            table$getColumn('ctrl')$setTitle(depLevels$ref)
+            table$getColumn('cases')$setTitle(depLevels$other)
+            table$getColumn('ctrl')$setSuperTitle(dep)
+            table$getColumn('cases')$setSuperTitle(dep)
+
+            # rows with the case/control status and the matched set known;
+            # convert whole columns before subsetting, which would drop the
+            # "values" attribute toNumeric needs for a nominal integer column
+            keep <- ! is.na(data[[dep]])
+            if ( ! is.null(strata))
+                keep <- keep & ! is.na(data[[strata]])
+            event <- as.integer(as.character(data[[dep]]) != depLevels$ref)[keep]
+
+            covs <- list()
+            for (cov in self$options$covs)
+                covs[[cov]] <- jmvcore::toNumeric(data[[cov]])[keep]
+            factors <- list()
+            for (factor in self$options$factors)
+                factors[[factor]] <- factor(data[[factor]], levels=levels(data[[factor]]))[keep]
+
+            table$addRow(rowKey='.dep', values=c(list(var=dep, level=.('n (%)')),
+                                                  clrDepFrequencies(event)))
 
             # never an empty level cell: jamovi renders these columns as row
             # headers and merges an empty one into the cell above, which
             # shifts the rest of the row
-            for (cov in self$options$covs)
-                table$addRow(rowKey=paste0('.cov', cov), values=list(var=cov, level=.('Mean \u00b1 SD')))
-
-            for (factor in self$options$factors) {
-                levels <- levels(self$data[[factor]])
-                for (k in seq_along(levels)) {
-                    table$addRow(rowKey=paste0('.fac', factor, '.', k),
-                                 values=list(var=factor, level=levels[k]))
-                }
+            desc <- clrDescriptives(event, covs, factors)
+            for (k in seq_len(nrow(desc))) {
+                level <- switch(desc$type[k],
+                                cov=.('Mean \u00b1 SD'), missing=.('Missing'), desc$level[k])
+                table$addRow(rowKey=desc$key[k], values=list(
+                    var=desc$var[k], level=level,
+                    ctrl=desc$ctrl[k], cases=desc$cases[k], total=desc$total[k]))
             }
 
-            table$setNote(
-                "desc",
-                .("Mean \u00b1 SD for covariates; n (%) for factor levels, with percentages within each column; for the dependent variable, of the total.")
-            )
+            private$.note(table, "desc", paste(
+                .("Mean \u00b1 SD for covariates; n (%) for factor levels, with percentages of the known values within each column; for the dependent variable and missing values, of the column total."),
+                jmvcore::format(
+                    .("All {n} rows with the dependent and matching variables known; the models use only the rows complete for every variable."),
+                    n=sum(keep))))
         },
         .initModelFitTable = function() {
             table <- self$results$modelFit
 
             for (i in seq_along(private$.getModelTerms()))
                 table$addRow(rowKey=i, values=list(model = i))
-
-            table$setNote(
-                "n",
-                jmvcore::format(
-                    .("Models estimated using N={n} observations in {sets} matched sets"),
-                    n="...", sets="..."
-                )
-            )
         },
         .initModelCompTable = function() {
             table <- self$results$modelComp
@@ -242,75 +245,28 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         },
         .initCoefTables = function() {
             groups <- self$results$models
-            factors <- self$options$factors
             termsAll <- private$.getModelTerms()
-
-            dep <- self$options$dep
-            if (is.null(dep) ) {
-                note <- paste0(.("Estimates represent the log odds of \u2026 within matched sets"))
-            } else {
-                depLevels <- private$.getLevelsDep()
-                noteText <- if (self$options$orTable)
-                    .('Odds ratios of "{dep} = {level1}" vs. "{dep} = {level2}", conditional on the matched sets')
-                else
-                    .('Estimates represent the log odds of "{dep} = {level1}" vs. "{dep} = {level2}", conditional on the matched sets')
-                note <- jmvcore::format(
-                    noteText,
-                    dep = dep,
-                    level1 = depLevels$other,
-                    level2 = depLevels$ref
-                )
-            }
-
-            rowNamesModel <- private$.getRowNamesModel()
-
-            ciWidthTitleString <- .('{ciWidth}% Confidence Interval')
+            ciTitle <- jmvcore::format(.('{ciWidth}% CI'), ciWidth=self$options$ciWidth)
 
             for (i in seq_along(termsAll)) {
                 table <- groups$get(key=i)$coef
-
-                ciWidth <- self$options$ciWidth
-                ciWidthTitle <- jmvcore::format(ciWidthTitleString, ciWidth=ciWidth)
-                table$getColumn('lower')$setSuperTitle(ciWidthTitle)
-                table$getColumn('upper')$setSuperTitle(ciWidthTitle)
-
-                ciWidthOR <- self$options$ciWidthOR
-                ciWidthORTitle <- jmvcore::format(ciWidthTitleString, ciWidth=ciWidthOR)
-                table$getColumn('oddsLower')$setSuperTitle(ciWidthORTitle)
-                table$getColumn('oddsUpper')$setSuperTitle(ciWidthORTitle)
-
-                coefTerms <- rowNamesModel[[i]]
-
-                terms <- termsAll[[i]]
-
-                # no intercept in a conditional model: coefTerms starts at the
-                # first predictor (jmv's iter started at 1 for the intercept)
-                iter <- 0
-                for (j in seq_along(terms)) {
-                    if (any(terms[[j]] %in% factors)) {
-
-                        table$addRow(rowKey=terms[[j]],
-                                     values=list(term = paste0(jmvcore::stringifyTerm(terms[[j]]), ':'),
-                                                 est='', se='', odds='', z='', p='',
-                                                 lower='', upper='', oddsLower='', oddsUpper='',
-                                                 pOR=''))
-
-                        contrastNames <- private$.contrastsCoefTable(terms[[j]])
-
-                        for (k in seq_along(contrastNames)) {
-                            iter <- iter + 1
-                            rowKey <- jmvcore::composeTerm(coefTerms[[iter]])
-                            table$addRow(rowKey=rowKey, values=list(term = contrastNames[[k]]))
-                            table$addFormat(rowKey=rowKey, col=1, jmvcore::Cell.INDENTED)
-                        }
-                    } else {
-                        iter <- iter + 1
-                        rowKey <- jmvcore::composeTerm(jmvcore::toB64(terms[[j]]))
-                        table$addRow(rowKey=rowKey, values=list(term = jmvcore::stringifyTerm(terms[[j]])))
-                    }
+                if (self$options$uniMulti) {
+                    for (col in c('or', 'lower', 'upper', 'p', 'ptrend'))
+                        table$getColumn(col)$setSuperTitle(.('Multivariable'))
+                } else {
+                    table$getColumn('lower')$setSuperTitle(ciTitle)
+                    table$getColumn('upper')$setSuperTitle(ciTitle)
                 }
 
-                table$setNote("est", note)
+                layout <- private$.coefLayout(i)
+                for (row in layout)
+                    table$addRow(rowKey=row$key, values=list(var=row$var, level=row$level))
+
+                # forest plot: one line per table row, plus a header line per
+                # factor and per interaction
+                headers <- sum(vapply(termsAll[[i]], function(t)
+                    length(t) > 1 || t %in% self$options$factors, logical(1)))
+                groups$get(key=i)$forest$setSize(700, 90 + 26 * (length(layout) + headers))
             }
         },
         .initCollinearityTable = function() {
@@ -346,54 +302,15 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     nSets=comp$nSets[i], nObs=comp$nObs[i]))
             }
 
+            nSets <- sum(comp$nSets)
             nInf <- sum(comp$nSets[comp$informative])
-            table$setNote(
-                "sets",
-                jmvcore::format(
-                    .("{sets} matched sets, {inf} informative. Sets without a case or without a control do not contribute to the conditional likelihood."),
-                    sets=sum(comp$nSets), inf=nInf
-                )
-            )
-        },
-        .populateDescTable = function() {
-            if ( ! self$options$descTable)
-                return()
-
-            table <- self$results$desc
-            data <- self$dataProcessed
-            # the analysed rows (complete for every variable), with the
-            # variables as the user coded them; convert whole columns before
-            # subsetting, which drops the "values" attribute toNumeric needs
-            # for a nominal integer column (it arrives as a factor)
-            rows <- match(rownames(data), rownames(self$data))
-
-            covs <- list()
-            for (cov in self$options$covs)
-                covs[[cov]] <- jmvcore::toNumeric(self$data[[cov]])[rows]
-            factors <- list()
-            for (factor in self$options$factors)
-                factors[[factor]] <- factor(self$data[[factor]], levels=levels(self$data[[factor]]))[rows]
-
-            table$setRow(rowKey='.dep', values=clrDepFrequencies(data$.EVENT))
-
-            desc <- clrDescriptives(data$.EVENT, covs, factors)
-            # paste0() of an empty vector is not empty: build keys per variable
-            keys <- c(
-                unname(vapply(names(covs), function(cov) paste0('.cov', cov), '')),
-                unlist(lapply(names(factors), function(f) paste0('.fac', f, '.', seq_along(levels(factors[[f]])))))
-            )
-            for (k in seq_along(keys)) {
-                table$setRow(rowKey=keys[k], values=list(
-                    ctrl=desc$ctrl[k], cases=desc$cases[k], total=desc$total[k]))
-            }
-
-            table$setNote(
-                "n",
-                jmvcore::format(
-                    .("N={n} observations with complete data on every variable of the analysis"),
-                    n=nrow(data)
-                )
-            )
+            private$.note(table, "sets", jmvcore::format(
+                .("{sets} matched sets, {inf} informative. Sets without a case or without a control do not contribute to the conditional likelihood."),
+                sets=nSets, inf=nInf))
+            # a warning, shown even with the notes off
+            table$setNote("uninf", if (nInf < nSets && ! self$options$showNotes)
+                jmvcore::format(.("{n} uninformative sets (no case or no control left)"),
+                                n=nSets - nInf))
         },
         .populateModelFitTable = function() {
             table <- self$results$modelFit
@@ -413,14 +330,10 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 table$setRow(rowNo=i, values = row)
             }
 
-            table$setNote(
-                "n",
-                jmvcore::format(
-                    .("Models estimated using N={n} observations in {sets} matched sets"),
-                    n=self$models[[1]]$n,
-                    sets=length(unique(self$dataProcessed$.STRATA))
-                )
-            )
+            private$.note(table, "n", jmvcore::format(
+                .("Models estimated using N={n} observations in {sets} matched sets"),
+                n=self$models[[1]]$n,
+                sets=length(unique(self$dataProcessed$.STRATA))))
         },
         .populateModelCompTable = function() {
             if (self$nModels <= 1)
@@ -473,61 +386,139 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         },
         .populateCoefTables = function() {
             groups <- self$results$models
-            termsAll <- private$.getRowNamesModel()
+            termsAll <- private$.getModelTerms()
+            factors <- self$options$factors
+            level <- self$options$ciWidth / 100
 
             for (i in seq_along(termsAll)) {
                 table <- groups$get(key=i)$coef
+                fit <- self$models[[i]]
+                coef <- clrCoefTable(fit)
+                ci <- exp(clrConfint(fit, level=level))
+                termsB64 <- jmvcore::composeTerms(lapply(termsAll[[i]], jmvcore::toB64))
+                values <- list()
 
-                CI <- self$CICoefEst[[i]]
-                CIOR <- self$CICoefEstOR[[i]]
-                coef <- clrCoefTable(self$models[[i]])
-                terms <- termsAll[[i]]
-                rowTerms <- jmvcore::decomposeTerms(rownames(coef))
+                for (row in private$.coefLayout(i)) {
+                    term <- termsAll[[i]][[row$term]]
+                    main <- length(term) == 1
+                    isFactor <- main && term %in% factors
+                    nLevels <- if (isFactor) length(levels(self$data[[term]])) else 0
+                    vals <- list()
 
-                for (j in seq_along(terms)) {
-                    term <- terms[[j]]
+                    if (row$ref) {
+                        # reference level: OR 1; for a factor with 3+ levels
+                        # the p of the whole factor and of the trend
+                        vals$or <- 1
+                        if (nLevels >= 3) {
+                            lrt <- self$lrtModelTerms[[i]]
+                            vals$p <- lrt$p[lrt$term == jmvcore::toB64(term)]
+                            if (self$options$trend)
+                                vals$ptrend <- clrTrendP(termsB64, jmvcore::toB64(term),
+                                                         private$.trendScores(term),
+                                                         self$dataProcessed, self$options$ties)
+                        }
+                        if (self$options$uniMulti) {
+                            vals$or_u <- 1
+                            if (nLevels >= 3) {
+                                vals$p_u <- clrFitMeasures(private$.uniFit(term))$p
+                                if (self$options$trend)
+                                    vals$ptrend_u <- clrTrendP(jmvcore::toB64(term), jmvcore::toB64(term),
+                                                               private$.trendScores(term),
+                                                               self$dataProcessed, self$options$ties)
+                            }
+                        }
+                    } else {
+                        # aliased columns (clrAliased) stay NA and their cells empty
+                        k <- private$.findCoef(row$parts, rownames(coef))
+                        if (length(k) == 1 && ! is.na(coef$est[k])) {
+                            vals$or <- exp(coef$est[k])
+                            vals$lower <- ci[k, 1]
+                            vals$upper <- ci[k, 2]
+                            vals$p <- coef$p[k]
+                            vals$est <- coef$est[k]
+                            vals$se <- coef$se[k]
+                            vals$z <- coef$z[k]
+                        }
+                        if (self$options$uniMulti && main) {
+                            uni <- private$.uniFit(term)
+                            uCoef <- clrCoefTable(uni)
+                            uCi <- exp(clrConfint(uni, level=level))
+                            k <- private$.findCoef(row$parts, rownames(uCoef))
+                            if (length(k) == 1 && ! is.na(uCoef$est[k])) {
+                                vals$or_u <- exp(uCoef$est[k])
+                                vals$lower_u <- uCi[k, 1]
+                                vals$upper_u <- uCi[k, 2]
+                                vals$p_u <- uCoef$p[k]
+                            }
+                        }
+                    }
 
-                    # check which rows have the same length + same terms
-                    index <- which(length(term) == sapply(rowTerms, length) &
-                                       sapply(rowTerms, function(x) all(term %in% x)))
-
-                    # aliased columns (clrAliased) stay NA and their rows empty
-                    if (length(index) != 1 || is.na(coef$est[index]))
-                        next
-
-                    row <- list()
-                    row[["est"]] <- coef$est[index]
-                    row[["se"]] <- coef$se[index]
-                    row[["odds"]] <- exp(coef$est[index])
-                    row[["z"]] <- coef$z[index]
-                    row[["p"]] <- coef$p[index]
-                    row[["lower"]] <- CI[index, 1]
-                    row[["upper"]] <- CI[index, 2]
-                    row[["oddsLower"]] <- CIOR[index, 1]
-                    row[["oddsUpper"]] <- CIOR[index, 2]
-                    row[["pOR"]] <- coef$p[index]
-
-                    table$setRow(rowKey=jmvcore::composeTerm(term), values = row)
+                    vals <- Filter(function(v) length(v) == 1 && ! is.na(v), vals)
+                    # '' rather than nothing: jamovi shows an unset number as '.'
+                    table$setRow(rowKey=row$key, values=utils::modifyList(private$.blankCoef, vals))
+                    values[[row$key]] <- vals
                 }
+                private$.coefValues[[i]] <- values
+
+                private$.note(table, "est", private$.coefNote(i))
 
                 # name the terms that cannot be estimated, rather than only
-                # leaving their rows empty
-                aliased <- clrAliasedTerms(self$models[[i]])
-                if (length(aliased) > 0)
-                    table$setNote(
-                        "singular",
-                        jmvcore::format(
-                            .("Not estimable: {terms}. A predictor that does not vary within the matched sets (e.g. a matching variable) or that is collinear with others cannot be estimated by conditional logistic regression."),
-                            terms=private$.termNames(aliased)
-                        )
-                    )
+                # leaving their rows empty (a warning: always shown)
+                aliased <- clrAliasedTerms(fit)
+                table$setNote("singular", if (length(aliased) > 0)
+                    jmvcore::format(
+                        .("Not estimable: {terms}. A predictor that does not vary within the matched sets (e.g. a matching variable) or that is collinear with others cannot be estimated by conditional logistic regression."),
+                        terms=private$.termNames(aliased)))
 
                 # e.g. "Loglik converged before variable 1; coefficient may be
                 # infinite": separation within the matched sets
-                warnings <- self$models[[i]]$clrWarnings
-                if (length(warnings) > 0)
-                    table$setNote("fit", paste(.("Model fit warning:"), paste(warnings, collapse="; ")))
+                warnings <- fit$clrWarnings
+                table$setNote("fit", if (length(warnings) > 0)
+                    paste(.("Model fit warning:"), paste(warnings, collapse="; ")))
             }
+        },
+        .populateForest = function() {
+            if ( ! self$options$forest)
+                return()
+
+            groups <- self$results$models
+            termsAll <- private$.getModelTerms()
+
+            for (i in seq_along(termsAll)) {
+                image <- groups$get(key=i)$forest
+                if ( ! is.null(image$state))
+                    next
+
+                # the rows of the coefficient table, with a header line for
+                # each factor and interaction; levels indented under it
+                values <- private$.coefValues[[i]]
+                get <- function(vals, name) if (is.null(vals[[name]])) NA_real_ else vals[[name]]
+                lines <- list()
+                shown <- character()
+                for (row in private$.coefLayout(i)) {
+                    term <- termsAll[[i]][[row$term]]
+                    header <- length(term) > 1 || term %in% self$options$factors
+                    if (header && ! row$var %in% shown) {
+                        lines[[length(lines) + 1]] <- data.frame(
+                            label=row$var, ref=FALSE, or=NA_real_, lo=NA_real_, hi=NA_real_,
+                            p=NA_real_, or_u=NA_real_, lo_u=NA_real_, hi_u=NA_real_)
+                        shown <- c(shown, row$var)
+                    }
+                    v <- values[[row$key]]
+                    lines[[length(lines) + 1]] <- data.frame(
+                        label=if (header) paste0("    ", row$level) else row$var,
+                        ref=row$ref, or=if (row$ref) 1 else get(v, "or"),
+                        lo=get(v, "lower"), hi=get(v, "upper"), p=get(v, "p"),
+                        or_u=get(v, "or_u"), lo_u=get(v, "lower_u"), hi_u=get(v, "upper_u"))
+                }
+                image$setState(do.call(rbind, lines))
+            }
+        },
+        .forestPlot = function(image, ggtheme, theme, ...) {
+            if (is.null(image$state))
+                return(FALSE)
+            print(clrForestPlot(image$state, uniMulti=self$options$uniMulti, .=self$translate))
+            TRUE
         },
         .populateCollinearityTable = function() {
             if ( ! self$options$collin)
@@ -554,11 +545,79 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 }
 
                 if (any(vapply(termsAll[[i]], function(t) any(t %in% self$options$factors), logical(1))))
-                    table$setNote("gvif", .("For terms with more than one coefficient the generalised VIF is shown"))
+                    private$.note(table, "gvif", .("For terms with more than one coefficient the generalised VIF is shown"))
             }
         },
 
         #### Helper functions ----
+        # an explanatory note: shown only with "Show notes" (warnings call
+        # setNote directly and are always shown)
+        .note = function(table, key, text) {
+            table$setNote(key, if (self$options$showNotes) text)
+        },
+        .coefNote = function(i) {
+            dep <- self$options$dep
+            depLevels <- private$.getLevelsDep()
+            terms <- private$.getModelTerms()[[i]]
+            hasFactor <- any(vapply(terms, function(t) length(t) == 1 && t %in% self$options$factors, logical(1)))
+            hasCov <- any(vapply(terms, function(t) length(t) == 1 && t %in% self$options$covs, logical(1)))
+            # one literal per sentence, so each is a whole msgid for translators
+            paste(c(
+                jmvcore::format(
+                    .('Odds ratios (OR) of "{dep} = {level1}" vs. "{dep} = {level2}" within the matched sets, with {ciWidth}% confidence intervals.'),
+                    dep=dep, level1=depLevels$other, level2=depLevels$ref,
+                    ciWidth=self$options$ciWidth),
+                if (hasFactor)
+                    .("Factors: OR against the reference level (OR = 1); on the reference row of a factor with three or more levels, p of the likelihood ratio test of the whole factor."),
+                if (hasCov)
+                    .("Covariates: OR per one-unit increase."),
+                if (length(terms) > 1)
+                    .("Multivariable ORs are adjusted for the other variables in the model."),
+                if (self$options$uniMulti)
+                    .("Univariable: each variable alone, on the same rows as the model."),
+                if (self$options$trend)
+                    .("p trend: the levels scored 1, 2, 3, ... in their order (Wald test); the multivariable trend keeps the other variables of the model."),
+                if (any(lengths(terms) > 1))
+                    .("With interactions, main-effect ORs apply at the reference level (or 0) of the interacting variable.")),
+                collapse=" ")
+        },
+        # Rows of the coefficient table of model i, from the options and the
+        # level names alone (so they exist in .init()): for a factor, its
+        # reference level (OR 1) and one row per other level; for a covariate,
+        # one row; for an interaction, one row per coefficient. `parts` are
+        # the model-matrix names of the variables in a coefficient.
+        .coefLayout = function(i) {
+            terms <- private$.getModelTerms()[[i]]
+            factors <- self$options$factors
+            rows <- list()
+            for (j in seq_along(terms)) {
+                t <- terms[[j]]
+                var <- paste(t, collapse=" \u00d7 ")
+                isf <- t %in% factors
+                if (length(t) == 1 && isf)
+                    rows[[length(rows) + 1]] <- list(key=paste0('.ref', t), term=j, var=var,
+                                                     level=private$.getLevels(t)$ref,
+                                                     ref=TRUE, parts=NULL)
+                # non-reference levels crossed in model-matrix order (the
+                # first variable varies fastest, as expand.grid)
+                grid <- lapply(t, function(v) if (v %in% factors) private$.getLevels(v)$other else NA)
+                g <- expand.grid(grid, stringsAsFactors=FALSE)
+                for (r in seq_len(nrow(g))) {
+                    lv <- unlist(g[r, ], use.names=FALSE)
+                    parts <- ifelse(isf, paste0(jmvcore::toB64(t), jmvcore::toB64(lv)), jmvcore::toB64(t))
+                    level <- if (any(isf)) paste(lv[isf], collapse=" \u00d7 ") else .("per unit")
+                    rows[[length(rows) + 1]] <- list(key=paste(parts, collapse=':'), term=j,
+                                                     var=var, level=level, ref=FALSE, parts=parts)
+                }
+            }
+            rows
+        },
+        # the coefficient whose model-matrix name holds the same parts (R may
+        # order the variables of an interaction differently)
+        .findCoef = function(parts, names) {
+            which(vapply(strsplit(names, ':', fixed=TRUE), function(x)
+                length(x) == length(parts) && all(parts %in% x), logical(1)))
+        },
         .termNames = function(labels) {
             # model-matrix term labels (base64 names, ':' for interactions)
             # back to the names the user sees
@@ -583,29 +642,6 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
 
             return(private$.modelTerms)
-        },
-        .getRowNamesModel = function() {
-            if (is.null(private$.rowNamesModel)) {
-                factors <- self$options$factors
-                termsAll <- private$.getModelTerms()
-
-                rowNamesAll <- list()
-                for (i in seq_along(termsAll)) {
-                    rowNames <- list()
-
-                    terms <- termsAll[[i]]
-                    for (term in terms) {
-                        if (any(term %in% factors))
-                            rowNames <- c(rowNames, private$.contrastModel(term))
-                        else
-                            rowNames[[length(rowNames) + 1]] <- jmvcore::toB64(term)
-                    }
-                    rowNamesAll[[i]] <- rowNames
-                }
-                private$.rowNamesModel <- rowNamesAll
-            }
-
-            return(private$.rowNamesModel)
         },
         .getLevelsDep = function() {
             if (is.null(private$.levelsDep) && ! is.null(self$options$dep))
@@ -708,65 +744,5 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             data[[".STRATA"]] <- factor(data[[".STRATA"]])
 
             return(data)
-        },
-        .contrastModel = function(terms) {
-            # Returns the names of the factor contrasts as they are
-            # defined by the coxph function
-
-            factors <- self$options$factors
-
-            contrast <- list()
-            for (term in terms) {
-                if (term %in% factors) {
-                    contrast[[term]] <- paste0(
-                        jmvcore::toB64(term),
-                        jmvcore::toB64(private$.getLevels(term)$other)
-                    )
-                } else {
-                    contrast[[term]] <- jmvcore::toB64(term)
-                }
-            }
-
-            contrastGrid <- expand.grid(contrast)
-            contrastTerms <- list()
-            for (i in 1:nrow(contrastGrid))
-                contrastTerms[[i]] <- as.character(unlist(contrastGrid[i,]))
-
-            return(contrastTerms)
-        },
-        .contrastsCoefTable = function(terms) {
-            # Returns the names of the factor contrasts as they are
-            # displayed in the jmv coef table
-
-            factors <- self$options$factors
-            refLevels <- self$refLevels
-            refVars <- sapply(refLevels, function(x) x$var)
-
-            levels <- list()
-            for (factor in factors)
-                levels[[factor]] <- levels(self$data[[factor]])
-
-            contrast <- list()
-            for (term in terms) {
-                if (term %in% factors) {
-                    ref <- refLevels[[which(term == refVars)]][['ref']]
-                    refNo <- which(ref == levels[[term]])
-
-                    contrLevels <- levels[[term]][-refNo]
-                    refLevel <- levels[[term]][refNo]
-
-                    c <- paste(contrLevels, refLevel, sep = ' \u2013 ')
-                    if (length(terms) > 1)
-                        c <- paste0('(', c, ')')
-
-                    contrast[[term]] <- c
-                } else {
-                    contrast[[term]] <- term
-                }
-            }
-            contrastGrid <- expand.grid(contrast)
-            contrastNames <- apply(contrastGrid, 1, jmvcore::stringifyTerm)
-
-            return(contrastNames)
         })
 )

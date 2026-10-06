@@ -437,6 +437,8 @@ window.Quarto = {
   <li><a href="#model-comparisons" id="toc-model-comparisons" class="nav-link" data-scroll-target="#model-comparisons">Model Comparisons</a></li>
   <li><a href="#omnibus-likelihood-ratio-tests" id="toc-omnibus-likelihood-ratio-tests" class="nav-link" data-scroll-target="#omnibus-likelihood-ratio-tests">Omnibus Likelihood Ratio Tests</a></li>
   <li><a href="#model-coefficients" id="toc-model-coefficients" class="nav-link" data-scroll-target="#model-coefficients">Model Coefficients</a></li>
+  <li><a href="#forest-plot" id="toc-forest-plot" class="nav-link" data-scroll-target="#forest-plot">Forest Plot</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a></li>
   <li><a href="#collinearity-statistics" id="toc-collinearity-statistics" class="nav-link" data-scroll-target="#collinearity-statistics">Collinearity Statistics</a></li>
   <li><a href="#what-changed-from-jmvs-logistic-regression" id="toc-what-changed-from-jmvs-logistic-regression" class="nav-link" data-scroll-target="#what-changed-from-jmvs-logistic-regression">What changed from jmv’s logistic regression</a></li>
   </ul>
@@ -497,7 +499,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.</p>
 </div>
 </div>
 <p>One row for each composition of a set (cases, controls), with the number of sets and the observations in them. This table is the first thing to check:</p>
@@ -561,16 +562,16 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Mean ± SD for covariates; n (%) for factor levels, with percentages within each column; for the dependent variable, of the total. N=248 observations with complete data on every variable of the analysis</p>
 </div>
 </div>
-<p>A first table for a paper, computed on the rows that enter the models:</p>
+<p>A first table for a paper:</p>
 <ul>
 <li>the <strong>dependent variable</strong>: the numbers of controls and cases, with their percentages of the total;</li>
 <li>each <strong>covariate</strong>: mean ± SD in controls, in cases and in total;</li>
-<li>each <strong>factor</strong>: n (%) for every level, with percentages within each column.</li>
+<li>each <strong>factor</strong>: n (%) for every level, with percentages of the known values within each column;</li>
+<li>a <strong>Missing</strong> row, n (% of the column), under a variable only if it has missing values (see the <a href="../usecases/bdendo.html">endometrial cancer use case</a>).</li>
 </ul>
-<p>Every variable in <strong>Covariates</strong> and <strong>Factors</strong> is included, whether or not it is in a model block. All these variables also define the complete rows, so a variable with many missing values reduces the table and the models alike.</p>
+<p>The table describes every row whose case/control status and matched set are known, and includes every variable in <strong>Covariates</strong> and <strong>Factors</strong>, whether or not it is in a model block. The models use fewer rows when there are missing values: only those complete for every variable.</p>
 </section>
 <section id="model-fit-measures" class="level2">
 <h2 class="anchored" data-anchor-id="model-fit-measures">Model Fit Measures</h2>
@@ -619,7 +620,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Models estimated using N=248 observations in 83 matched sets</p>
 </div>
 </div>
 <table class="caption-top table">
@@ -739,87 +739,145 @@ window.Quarto = {
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Lower</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Upper</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p trend</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Lower Multivariable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Upper Multivariable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p trend</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Z</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">induced</td>
-<td style="text-align: right;">1.405</td>
-<td style="text-align: right;">0.697</td>
-<td style="text-align: right;">2.113</td>
-<td style="text-align: right;">0.361</td>
-<td style="text-align: right;">3.891</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
+<td style="text-align: right;">1.077</td>
+<td style="text-align: right;">0.714</td>
+<td style="text-align: right;">1.624</td>
+<td style="text-align: right;">0.725</td>
+<td style="text-align: right;"></td>
 <td style="text-align: right;">4.076</td>
 <td style="text-align: right;">2.008</td>
 <td style="text-align: right;">8.274</td>
+<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">1.405</td>
+<td style="text-align: right;">0.361</td>
+<td style="text-align: right;">3.891</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">spontaneous_f:</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.000</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">1.000</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">0.000</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1 – 0</td>
-<td style="text-align: right;">2.047</td>
-<td style="text-align: right;">1.163</td>
-<td style="text-align: right;">2.930</td>
-<td style="text-align: right;">0.451</td>
-<td style="text-align: right;">4.540</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3.776</td>
+<td style="text-align: right;">1.838</td>
+<td style="text-align: right;">7.758</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;"></td>
 <td style="text-align: right;">7.744</td>
 <td style="text-align: right;">3.200</td>
 <td style="text-align: right;">18.736</td>
+<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">2.047</td>
+<td style="text-align: right;">0.451</td>
+<td style="text-align: right;">4.540</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2 – 0</td>
-<td style="text-align: right;">3.933</td>
-<td style="text-align: right;">2.515</td>
-<td style="text-align: right;">5.352</td>
-<td style="text-align: right;">0.724</td>
-<td style="text-align: right;">5.434</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9.719</td>
+<td style="text-align: right;">3.805</td>
+<td style="text-align: right;">24.825</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;"></td>
 <td style="text-align: right;">51.082</td>
 <td style="text-align: right;">12.362</td>
 <td style="text-align: right;">211.088</td>
+<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">3.933</td>
+<td style="text-align: right;">0.724</td>
+<td style="text-align: right;">5.434</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Estimates represent the log odds of "case = 1" vs. "case = 0", conditional on the matched sets</p>
 </div>
 </div>
+<p>One row per level, with the variable named once on the left (the layout of the prognosis module’s Cox regression):</p>
 <ul>
-<li><strong>Estimate</strong> is the conditional log odds ratio. <strong>Odds ratio</strong> is its exponential. Both compare the non-reference level of the dependent variable (the cases) with the reference level (the controls) <strong>within matched sets</strong>.</li>
-<li>Standard errors, <em>Z</em> and <em>p</em> are Wald statistics, and the confidence intervals are Wald intervals (<span class="math inline">\(\hat\beta \pm z_{1-\alpha/2}\,\mathrm{SE}\)</span>, exponentiated for odds ratios), as <code>confint()</code> gives for <code>clogit</code>.</li>
-<li>Factors are coded against their <strong>reference level</strong>, which the <strong>Reference Levels</strong> box sets (default: the first level).</li>
-<li>There is no intercept row (see <a href="../foundations/method.html">the method</a>).</li>
+<li>a <strong>factor</strong> starts with its <strong>reference level</strong>, OR = 1, set in the <strong>Reference Levels</strong> box (default: the first level), then one row for each other level, labelled by the level alone and compared with the reference;</li>
+<li>a <strong>covariate</strong> has one row, <em>per unit</em>: the OR for a one-unit increase;</li>
+<li>an <strong>interaction</strong> has one row per coefficient, labelled by the levels involved;</li>
+<li>there is no intercept row (see <a href="../foundations/method.html">the method</a>).</li>
 </ul>
-<p>With <strong>Odds ratios only</strong> ticked, the table keeps just the odds ratio, its confidence interval and p, in that order, which is the layout of most published tables. The <em>Odds ratio</em> and <em>Confidence interval</em> boxes are then not needed.</p>
+<p><strong>OR</strong> is the odds ratio of being a case (the non-reference level of the dependent variable) rather than a control, <strong>within the matched sets</strong>. Its confidence interval is a Wald interval, exponentiated (<span class="math inline">\(\exp(\hat\beta \pm z_{1-\alpha/2}\,\mathrm{SE})\)</span>, as <code>confint()</code> gives for <code>clogit</code>), at the level set in <em>Confidence interval</em> (95% by default), and <em>p</em> is the Wald test. On the reference row of a factor with three or more levels, <em>p</em> is the likelihood ratio test of the whole factor, the same as in the omnibus table.</p>
+<p>The options of <em>Model Coefficients</em>:</p>
+<ul>
+<li><strong>Univariable and multivariable</strong> adds the odds ratios of each variable alone (Univariable) beside those of the model (Multivariable). Both are estimated on the same rows, those complete for every variable of the model, so the difference between them is the adjustment alone.</li>
+<li><strong>Trend test (factors with 3+ levels)</strong> adds <em>p trend</em> on the reference row: the factor replaced by scores 1, 2, 3, … in the order of its levels (Wald test of the score). The univariable trend uses the factor alone, and the multivariable trend keeps the other variables of the model. The scores follow the order of the levels in the data, whichever level is the reference, so order the levels before testing. There is no trend test for a factor that is part of an interaction.</li>
+<li><strong>Log odds ratio, SE and Z</strong> adds the estimate <span class="math inline">\(\hat\beta\)</span> (the log odds ratio), its standard error and <span class="math inline">\(Z = \hat\beta / \mathrm{SE}\)</span> at the right.</li>
+</ul>
+</section>
+<section id="forest-plot" class="level2">
+<h2 class="anchored" data-anchor-id="forest-plot">Forest Plot</h2>
+<p><strong>Forest plot</strong> draws the odds ratios of each model, one line per row of the table. Reference levels are open diamonds at 1. With <em>Univariable and multivariable</em>, both estimates are drawn, univariable in grey.</p>
+<div id="fig-forest" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="output_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="1401"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The forest plot of model 2.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="notes" class="level2">
+<h2 class="anchored" data-anchor-id="notes">Notes</h2>
+<p>The notes that explain each table (how the odds ratios are defined, the number of rows used, what the matched-set table means) are hidden by default. Tick <strong>Show notes</strong> in <em>Options</em> to see them:</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="table table-sm jtab caption-top table-striped small">
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
@@ -828,37 +886,42 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">induced</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">4.076</td>
 <td style="text-align: right;">2.008</td>
 <td style="text-align: right;">8.274</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">spontaneous_f:</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.000</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1 – 0</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">7.744</td>
 <td style="text-align: right;">3.200</td>
 <td style="text-align: right;">18.736</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2 – 0</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">51.082</td>
 <td style="text-align: right;">12.362</td>
 <td style="text-align: right;">211.088</td>
-<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Odds ratios of "case = 1" vs. "case = 0", conditional on the matched sets</p>
+<p class="jnote"><i>Note.</i> Odds ratios (OR) of "case = 1" vs. "case = 0" within the matched sets, with 95% confidence intervals. Factors: OR against the reference level (OR = 1); on the reference row of a factor with three or more levels, p of the likelihood ratio test of the whole factor. Covariates: OR per one-unit increase. Multivariable ORs are adjusted for the other variables in the model.</p>
 </div>
 </div>
+<p>Warnings are shown whatever this option says: predictors that cannot be estimated (<em>Not estimable: …</em>), fitting problems, the number of uninformative matched sets, and reference levels not found.</p>
 </section>
 <section id="collinearity-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="collinearity-statistics">Collinearity Statistics</h2>
@@ -886,7 +949,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> For terms with more than one coefficient the generalised VIF is shown</p>
 </div>
 </div>
 <p>Variance inflation factors from the correlation matrix of the estimated coefficients. For a term with more than one coefficient, such as a factor with three levels, the table gives the <strong>generalised VIF</strong> of the term as a whole <span class="citation" data-cites="fox1992">(<a href="#ref-fox1992" role="doc-biblioref">Fox and Monette 1992</a>)</span>, with tolerance = 1/VIF. This is the formula of <code>car::vif</code>, except that the strata are not counted as a term.</p>
@@ -915,11 +977,19 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>—</td>
-<td><strong>Descriptive table</strong> by case/control status</td>
+<td><strong>Descriptive table</strong> by case/control status, with missing values</td>
 </tr>
 <tr class="even">
+<td>estimates, SE, Z first; odds ratios and their intervals on request</td>
+<td>odds ratios, CI and p by default, one row per level with the reference level at OR = 1 (as the prognosis module); log OR, SE and Z on request</td>
+</tr>
+<tr class="odd">
 <td>—</td>
-<td><strong>Odds ratios only</strong>: OR, CI and p, p last</td>
+<td>univariable beside multivariable odds ratios, trend test, forest plot</td>
+</tr>
+<tr class="even">
+<td>notes always shown</td>
+<td>explanatory notes on request (<em>Show notes</em>); warnings always</td>
 </tr>
 <tr class="odd">
 <td>intercept</td>

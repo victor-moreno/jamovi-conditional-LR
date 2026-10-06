@@ -8,7 +8,7 @@ It is a clone of jmv's *Binomial Logistic Regression* with one addition to the p
 **Matching Variable** that identifies the matched sets. The models are fitted by the
 conditional likelihood, as a Cox model stratified by matched set (`survival::coxph(...,
 method = "exact")`), the same fit as `survival::clogit`. It needs no packages beyond those
-bundled with jamovi: `jmvcore`, `R6` and `survival`.
+bundled with jamovi: `jmvcore`, `R6`, `survival` and `ggplot2`.
 
 Appears in jamovi's menu as **Regression ▸ Logistic Regression ▸ Conditional (Matched)**.
 
@@ -21,8 +21,7 @@ Kept from jmv's logistic regression, and working the same way:
 - **Model Fit**: deviance (−2 conditional log-likelihood), AIC, BIC, McFadden's, Cox & Snell's
   and Nagelkerke's pseudo R², and the overall likelihood ratio test;
 - **Model Comparisons** between blocks (likelihood ratio tests);
-- **Model Coefficients**: omnibus likelihood ratio tests per term, estimates (log odds ratios)
-  and odds ratios with confidence intervals;
+- omnibus likelihood ratio tests per term;
 - **Collinearity statistics** (VIF, or the generalised VIF for factors).
 
 Added:
@@ -34,9 +33,26 @@ Added:
   approximation for sets with many cases. All three agree when each set has one case;
 - a **Descriptive table** (*Descriptives* box): the frequencies of the dependent variable,
   mean ± SD of each covariate and n (%) of each factor level, in controls, cases and in
-  total, for the rows that enter the models;
-- **Odds ratios only** (*Model Coefficients*): the coefficient table reduced to the odds
-  ratio, its confidence interval and p, p last, as in a published table.
+  total, for every row whose case/control status and matched set are known, with a
+  *Missing* row under any variable that has missing values.
+
+Laid out as in the [prognosis](https://github.com/victor-moreno/jamovi-prognosis) module's
+Cox regression, rather than as in jmv:
+
+- **Model Coefficients**: one row per level, the variable named once; for a factor, its
+  reference level with OR = 1 and every other level labelled by its name alone; odds
+  ratio, confidence interval and p by default; on the reference row of a factor with three
+  or more levels, the likelihood ratio test of the whole factor. Options:
+  - **Univariable and multivariable**: the odds ratios of each variable alone, on the same
+    rows as the model, beside the adjusted ones;
+  - **Trend test (factors with 3+ levels)**: p trend, the levels scored 1, 2, 3, ... in their
+    order, univariable and multivariable;
+  - **Log odds ratio, SE and Z** at the right;
+  - **Forest plot** of each model, with univariable and multivariable estimates when both
+    are shown;
+- **Show notes** (*Options*): the notes explaining each table are hidden by default;
+  warnings (predictors that cannot be estimated, fitting problems, uninformative matched
+  sets) are always shown.
 
 Removed, because a conditional model has no intercept and so gives no absolute
 probabilities: Tjur's R², estimated marginal means, the prediction section (classification
@@ -130,6 +146,10 @@ FORT23/00032 and the Consortium for Biomedical Research in Epidemiology and Publ
 
 ## Versions
 
+- **0.3.0** — coefficient table as in the prognosis module (reference level OR = 1, level
+  labels), univariable and multivariable odds ratios, trend test, forest plot, missing
+  values in the descriptive table, *Show notes* option; replaces the jmv-style estimate
+  table and the *Odds ratio* / *Odds ratios only* options.
 - **0.2.0** — descriptive table, odds-ratios-only coefficient table, and two more data sets
   (endometrial cancer, simulated nested study).
 - **0.1.1** — aliased predictors (e.g. a matching variable) are detected by the module, so

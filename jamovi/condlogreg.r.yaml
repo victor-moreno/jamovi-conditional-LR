@@ -230,66 +230,107 @@ items:
                 - blocks
                 - refLevels
                 - ties
+                - uniMulti
+                - trend
+                - ciWidth
             description: a table of model coefficients
             refs: gail1981
             columns:
 
-              - name: term
-                title: "Predictor"
+              - name: var
+                title: ''
+                type: text
+                combineBelow: true
+
+              - name: level
+                title: ''
                 type: text
 
-              - name: est
-                title: Estimate
+              - name: or_u
+                title: OR
                 type: number
-                visible: (orTable == FALSE)
+                superTitle: Univariable
+                visible: (uniMulti)
+
+              - name: lower_u
+                title: Lower
+                type: number
+                superTitle: Univariable
+                visible: (uniMulti)
+
+              - name: upper_u
+                title: Upper
+                type: number
+                superTitle: Univariable
+                visible: (uniMulti)
+
+              - name: p_u
+                title: p
+                type: number
+                format: zto,pvalue
+                superTitle: Univariable
+                visible: (uniMulti)
+
+              - name: ptrend_u
+                title: p trend
+                type: number
+                format: zto,pvalue
+                superTitle: Univariable
+                visible: (uniMulti && trend)
+
+              - name: or
+                title: OR
+                type: number
 
               - name: lower
                 title: Lower
                 type: number
-                visible: (ci && orTable == FALSE)
 
               - name: upper
                 title: Upper
                 type: number
-                visible: (ci && orTable == FALSE)
-
-              - name: se
-                title: SE
-                type: number
-                visible: (orTable == FALSE)
-
-              - name: z
-                title: Z
-                type: number
-                visible: (orTable == FALSE)
 
               - name: p
                 title: p
                 type: number
                 format: zto,pvalue
-                visible: (orTable == FALSE)
 
-              - name: odds
-                title: Odds ratio
-                type: number
-                visible: (orTable || OR)
-
-              - name: oddsLower
-                title: Lower
-                type: number
-                visible: (orTable || (ciOR && OR))
-
-              - name: oddsUpper
-                title: Upper
-                type: number
-                visible: (orTable || (ciOR && OR))
-
-              # with orTable, p moves after the odds ratio and its interval
-              - name: pOR
-                title: p
+              - name: ptrend
+                title: p trend
                 type: number
                 format: zto,pvalue
-                visible: (orTable)
+                visible: (trend)
+
+              - name: est
+                title: Estimate
+                type: number
+                visible: (coefDetails)
+
+              - name: se
+                title: SE
+                type: number
+                visible: (coefDetails)
+
+              - name: z
+                title: Z
+                type: number
+                visible: (coefDetails)
+
+          - name: forest
+            title: Forest plot
+            type: Image
+            width: 700
+            height: 300
+            renderFun: .forestPlot
+            visible: (forest)
+            clearWith:
+                - dep
+                - strata
+                - blocks
+                - refLevels
+                - ties
+                - uniMulti
+                - ciWidth
 
           - name: assump
             title: Assumption Checks

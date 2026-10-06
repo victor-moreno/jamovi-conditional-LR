@@ -14,6 +14,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 list()),
             refLevels = NULL,
             ties = "exact",
+            showNotes = FALSE,
             setSummary = TRUE,
             descTable = FALSE,
             modelTest = FALSE,
@@ -23,12 +24,11 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             pseudoR2 = list(
                 "r2mf"),
             omni = FALSE,
-            ci = FALSE,
+            uniMulti = FALSE,
+            trend = FALSE,
+            coefDetails = FALSE,
+            forest = FALSE,
             ciWidth = 95,
-            OR = FALSE,
-            ciOR = FALSE,
-            ciWidthOR = 95,
-            orTable = FALSE,
             collin = FALSE, ...) {
 
             super$initialize(
@@ -101,6 +101,10 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "efron",
                     "breslow"),
                 default="exact")
+            private$..showNotes <- jmvcore::OptionBool$new(
+                "showNotes",
+                showNotes,
+                default=FALSE)
             private$..setSummary <- jmvcore::OptionBool$new(
                 "setSummary",
                 setSummary,
@@ -138,9 +142,21 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "omni",
                 omni,
                 default=FALSE)
-            private$..ci <- jmvcore::OptionBool$new(
-                "ci",
-                ci,
+            private$..uniMulti <- jmvcore::OptionBool$new(
+                "uniMulti",
+                uniMulti,
+                default=FALSE)
+            private$..trend <- jmvcore::OptionBool$new(
+                "trend",
+                trend,
+                default=FALSE)
+            private$..coefDetails <- jmvcore::OptionBool$new(
+                "coefDetails",
+                coefDetails,
+                default=FALSE)
+            private$..forest <- jmvcore::OptionBool$new(
+                "forest",
+                forest,
                 default=FALSE)
             private$..ciWidth <- jmvcore::OptionNumber$new(
                 "ciWidth",
@@ -148,24 +164,6 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 min=50,
                 max=99.9,
                 default=95)
-            private$..OR <- jmvcore::OptionBool$new(
-                "OR",
-                OR,
-                default=FALSE)
-            private$..ciOR <- jmvcore::OptionBool$new(
-                "ciOR",
-                ciOR,
-                default=FALSE)
-            private$..ciWidthOR <- jmvcore::OptionNumber$new(
-                "ciWidthOR",
-                ciWidthOR,
-                min=50,
-                max=99.9,
-                default=95)
-            private$..orTable <- jmvcore::OptionBool$new(
-                "orTable",
-                orTable,
-                default=FALSE)
             private$..collin <- jmvcore::OptionBool$new(
                 "collin",
                 collin,
@@ -178,6 +176,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..blocks)
             self$.addOption(private$..refLevels)
             self$.addOption(private$..ties)
+            self$.addOption(private$..showNotes)
             self$.addOption(private$..setSummary)
             self$.addOption(private$..descTable)
             self$.addOption(private$..modelTest)
@@ -186,12 +185,11 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..bic)
             self$.addOption(private$..pseudoR2)
             self$.addOption(private$..omni)
-            self$.addOption(private$..ci)
+            self$.addOption(private$..uniMulti)
+            self$.addOption(private$..trend)
+            self$.addOption(private$..coefDetails)
+            self$.addOption(private$..forest)
             self$.addOption(private$..ciWidth)
-            self$.addOption(private$..OR)
-            self$.addOption(private$..ciOR)
-            self$.addOption(private$..ciWidthOR)
-            self$.addOption(private$..orTable)
             self$.addOption(private$..collin)
         }),
     active = list(
@@ -202,6 +200,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         blocks = function() private$..blocks$value,
         refLevels = function() private$..refLevels$value,
         ties = function() private$..ties$value,
+        showNotes = function() private$..showNotes$value,
         setSummary = function() private$..setSummary$value,
         descTable = function() private$..descTable$value,
         modelTest = function() private$..modelTest$value,
@@ -210,12 +209,11 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         bic = function() private$..bic$value,
         pseudoR2 = function() private$..pseudoR2$value,
         omni = function() private$..omni$value,
-        ci = function() private$..ci$value,
+        uniMulti = function() private$..uniMulti$value,
+        trend = function() private$..trend$value,
+        coefDetails = function() private$..coefDetails$value,
+        forest = function() private$..forest$value,
         ciWidth = function() private$..ciWidth$value,
-        OR = function() private$..OR$value,
-        ciOR = function() private$..ciOR$value,
-        ciWidthOR = function() private$..ciWidthOR$value,
-        orTable = function() private$..orTable$value,
         collin = function() private$..collin$value),
     private = list(
         ..dep = NA,
@@ -225,6 +223,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..blocks = NA,
         ..refLevels = NA,
         ..ties = NA,
+        ..showNotes = NA,
         ..setSummary = NA,
         ..descTable = NA,
         ..modelTest = NA,
@@ -233,12 +232,11 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..bic = NA,
         ..pseudoR2 = NA,
         ..omni = NA,
-        ..ci = NA,
+        ..uniMulti = NA,
+        ..trend = NA,
+        ..coefDetails = NA,
+        ..forest = NA,
         ..ciWidth = NA,
-        ..OR = NA,
-        ..ciOR = NA,
-        ..ciWidthOR = NA,
-        ..orTable = NA,
         ..collin = NA)
 )
 
@@ -444,6 +442,7 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     active = list(
                         lrt = function() private$.items[["lrt"]],
                         coef = function() private$.items[["coef"]],
+                        forest = function() private$.items[["forest"]],
                         assump = function() private$.items[["assump"]]),
                     private = list(),
                     public=list(
@@ -489,65 +488,107 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                     "strata",
                                     "blocks",
                                     "refLevels",
-                                    "ties"),
+                                    "ties",
+                                    "uniMulti",
+                                    "trend",
+                                    "ciWidth"),
                                 refs="gail1981",
                                 columns=list(
                                     list(
-                                        `name`="term", 
-                                        `title`="Predictor", 
+                                        `name`="var", 
+                                        `title`="", 
+                                        `type`="text", 
+                                        `combineBelow`=TRUE),
+                                    list(
+                                        `name`="level", 
+                                        `title`="", 
                                         `type`="text"),
                                     list(
-                                        `name`="est", 
-                                        `title`="Estimate", 
+                                        `name`="or_u", 
+                                        `title`="OR", 
                                         `type`="number", 
-                                        `visible`="(orTable == FALSE)"),
+                                        `superTitle`="Univariable", 
+                                        `visible`="(uniMulti)"),
+                                    list(
+                                        `name`="lower_u", 
+                                        `title`="Lower", 
+                                        `type`="number", 
+                                        `superTitle`="Univariable", 
+                                        `visible`="(uniMulti)"),
+                                    list(
+                                        `name`="upper_u", 
+                                        `title`="Upper", 
+                                        `type`="number", 
+                                        `superTitle`="Univariable", 
+                                        `visible`="(uniMulti)"),
+                                    list(
+                                        `name`="p_u", 
+                                        `title`="p", 
+                                        `type`="number", 
+                                        `format`="zto,pvalue", 
+                                        `superTitle`="Univariable", 
+                                        `visible`="(uniMulti)"),
+                                    list(
+                                        `name`="ptrend_u", 
+                                        `title`="p trend", 
+                                        `type`="number", 
+                                        `format`="zto,pvalue", 
+                                        `superTitle`="Univariable", 
+                                        `visible`="(uniMulti && trend)"),
+                                    list(
+                                        `name`="or", 
+                                        `title`="OR", 
+                                        `type`="number"),
                                     list(
                                         `name`="lower", 
                                         `title`="Lower", 
-                                        `type`="number", 
-                                        `visible`="(ci && orTable == FALSE)"),
+                                        `type`="number"),
                                     list(
                                         `name`="upper", 
                                         `title`="Upper", 
-                                        `type`="number", 
-                                        `visible`="(ci && orTable == FALSE)"),
-                                    list(
-                                        `name`="se", 
-                                        `title`="SE", 
-                                        `type`="number", 
-                                        `visible`="(orTable == FALSE)"),
-                                    list(
-                                        `name`="z", 
-                                        `title`="Z", 
-                                        `type`="number", 
-                                        `visible`="(orTable == FALSE)"),
+                                        `type`="number"),
                                     list(
                                         `name`="p", 
                                         `title`="p", 
                                         `type`="number", 
-                                        `format`="zto,pvalue", 
-                                        `visible`="(orTable == FALSE)"),
+                                        `format`="zto,pvalue"),
                                     list(
-                                        `name`="odds", 
-                                        `title`="Odds ratio", 
-                                        `type`="number", 
-                                        `visible`="(orTable || OR)"),
-                                    list(
-                                        `name`="oddsLower", 
-                                        `title`="Lower", 
-                                        `type`="number", 
-                                        `visible`="(orTable || (ciOR && OR))"),
-                                    list(
-                                        `name`="oddsUpper", 
-                                        `title`="Upper", 
-                                        `type`="number", 
-                                        `visible`="(orTable || (ciOR && OR))"),
-                                    list(
-                                        `name`="pOR", 
-                                        `title`="p", 
+                                        `name`="ptrend", 
+                                        `title`="p trend", 
                                         `type`="number", 
                                         `format`="zto,pvalue", 
-                                        `visible`="(orTable)"))))
+                                        `visible`="(trend)"),
+                                    list(
+                                        `name`="est", 
+                                        `title`="Estimate", 
+                                        `type`="number", 
+                                        `visible`="(coefDetails)"),
+                                    list(
+                                        `name`="se", 
+                                        `title`="SE", 
+                                        `type`="number", 
+                                        `visible`="(coefDetails)"),
+                                    list(
+                                        `name`="z", 
+                                        `title`="Z", 
+                                        `type`="number", 
+                                        `visible`="(coefDetails)"))))
+                            self$add(jmvcore::Image$new(
+                                options=options,
+                                name="forest",
+                                title="Forest plot",
+                                width=700,
+                                height=300,
+                                renderFun=".forestPlot",
+                                visible="(forest)",
+                                clearWith=list(
+                                    "dep",
+                                    "strata",
+                                    "blocks",
+                                    "refLevels",
+                                    "ties",
+                                    "uniMulti",
+                                    "ciWidth")))
                             self$add(R6::R6Class(
                                 inherit = jmvcore::Group,
                                 active = list(
@@ -620,7 +661,7 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'            covs = vars(spontaneous, induced),
 #'            blocks = list(list("spontaneous", "induced")),
 #'            refLevels = list(list(var="case", ref="0")),
-#'            OR = TRUE)
+#'            uniMulti = TRUE)
 #'
 #' @param data the data as a data frame
 #' @param dep a string naming the dependent variable (case/control status)
@@ -640,6 +681,9 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   the conditional likelihood, exact or approximated. All three are identical
 #'   with one case per matched set; the approximations are faster for sets with
 #'   many cases
+#' @param showNotes \code{TRUE} or \code{FALSE} (default), show the
+#'   explanatory notes under the tables; warnings (e.g. predictors that cannot
+#'   be estimated) are always shown
 #' @param setSummary \code{TRUE} (default) or \code{FALSE}, provide a table of
 #'   the composition (cases and controls) of the matched sets
 #' @param descTable \code{TRUE} or \code{FALSE} (default), provide a table of
@@ -658,19 +702,18 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   respectively
 #' @param omni \code{TRUE} or \code{FALSE} (default), provide the omnibus
 #'   likelihood ratio tests for the predictors
-#' @param ci \code{TRUE} or \code{FALSE} (default), provide a confidence
-#'   interval for the model coefficient estimates
+#' @param uniMulti \code{TRUE} or \code{FALSE} (default), add the odds ratios
+#'   of each variable alone (univariable, on the same rows as the model) beside
+#'   those of the model (multivariable)
+#' @param trend \code{TRUE} or \code{FALSE} (default), p of a trend test for
+#'   each factor with three or more levels, the levels scored 1, 2, 3, ... in
+#'   their order
+#' @param coefDetails \code{TRUE} or \code{FALSE} (default), add the estimate
+#'   (log odds ratio), its standard error and Z to the coefficient table
+#' @param forest \code{TRUE} or \code{FALSE} (default), a forest plot of the
+#'   odds ratios of each model
 #' @param ciWidth a number between 50 and 99.9 (default: 95) specifying the
-#'   confidence interval width
-#' @param OR \code{TRUE} or \code{FALSE} (default), provide the exponential of
-#'   the log-odds ratio estimate, or the odds ratio estimate
-#' @param ciOR \code{TRUE} or \code{FALSE} (default), provide a confidence
-#'   interval for the model coefficient odds ratio estimates
-#' @param ciWidthOR a number between 50 and 99.9 (default: 95) specifying the
-#'   confidence interval width
-#' @param orTable \code{TRUE} or \code{FALSE} (default), show the model
-#'   coefficients as odds ratios, their confidence interval and p only, with p
-#'   last (replaces the estimate, SE and Z columns)
+#'   width of the confidence intervals of the odds ratios
 #' @param collin \code{TRUE} or \code{FALSE} (default), provide VIF and
 #'   tolerance collinearity statistics
 #' @return A results object containing:
@@ -699,6 +742,7 @@ condLogReg <- function(
                 list()),
     refLevels = NULL,
     ties = "exact",
+    showNotes = FALSE,
     setSummary = TRUE,
     descTable = FALSE,
     modelTest = FALSE,
@@ -708,12 +752,11 @@ condLogReg <- function(
     pseudoR2 = list(
                 "r2mf"),
     omni = FALSE,
-    ci = FALSE,
+    uniMulti = FALSE,
+    trend = FALSE,
+    coefDetails = FALSE,
+    forest = FALSE,
     ciWidth = 95,
-    OR = FALSE,
-    ciOR = FALSE,
-    ciWidthOR = 95,
-    orTable = FALSE,
     collin = FALSE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -742,6 +785,7 @@ condLogReg <- function(
         blocks = blocks,
         refLevels = refLevels,
         ties = ties,
+        showNotes = showNotes,
         setSummary = setSummary,
         descTable = descTable,
         modelTest = modelTest,
@@ -750,12 +794,11 @@ condLogReg <- function(
         bic = bic,
         pseudoR2 = pseudoR2,
         omni = omni,
-        ci = ci,
+        uniMulti = uniMulti,
+        trend = trend,
+        coefDetails = coefDetails,
+        forest = forest,
         ciWidth = ciWidth,
-        OR = OR,
-        ciOR = ciOR,
-        ciWidthOR = ciWidthOR,
-        orTable = orTable,
         collin = collin)
 
     analysis <- condLogRegClass$new(

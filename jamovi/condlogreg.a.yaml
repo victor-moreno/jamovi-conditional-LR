@@ -27,7 +27,7 @@ description:
                        covs = vars(spontaneous, induced),
                        blocks = list(list("spontaneous", "induced")),
                        refLevels = list(list(var="case", ref="0")),
-                       OR = TRUE)
+                       uniMulti = TRUE)
 
 
 options:
@@ -134,6 +134,16 @@ options:
             one case per matched set; the approximations are faster for sets
             with many cases
 
+    - name: showNotes
+      title: Show notes
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), show the explanatory notes under the
+            tables; warnings (e.g. predictors that cannot be estimated) are
+            always shown
+
     - name: setSummary
       title: Matched sets
       type: Bool
@@ -216,14 +226,42 @@ options:
             `TRUE` or `FALSE` (default), provide the omnibus likelihood ratio tests
             for the predictors
 
-    - name: ci
-      title: Confidence interval
+    - name: uniMulti
+      title: Univariable and multivariable
       type: Bool
       default: false
       description:
           R: >
-            `TRUE` or `FALSE` (default), provide a confidence interval
-            for the model coefficient estimates
+            `TRUE` or `FALSE` (default), add the odds ratios of each variable
+            alone (univariable, on the same rows as the model) beside those of
+            the model (multivariable)
+
+    - name: trend
+      title: Trend test (factors with 3+ levels)
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), p of a trend test for each factor with
+            three or more levels, the levels scored 1, 2, 3, ... in their order
+
+    - name: coefDetails
+      title: Log odds ratio, SE and Z
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), add the estimate (log odds ratio), its
+            standard error and Z to the coefficient table
+
+    - name: forest
+      title: Forest plot
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), a forest plot of the odds ratios of each
+            model
 
     - name: ciWidth
       title: Confidence level
@@ -233,47 +271,8 @@ options:
       default: 95
       description:
           R: >
-            a number between 50 and 99.9 (default: 95) specifying the confidence
-            interval width
-
-    - name: OR
-      title: Odds ratio
-      type: Bool
-      default: false
-      description:
-          R: >
-            `TRUE` or `FALSE` (default), provide the exponential of the log-odds
-            ratio estimate, or the odds ratio estimate
-
-    - name: ciOR
-      title: Confidence interval
-      type: Bool
-      default: false
-      description:
-          R: >
-            `TRUE` or `FALSE` (default), provide a confidence interval
-            for the model coefficient odds ratio estimates
-
-    - name: ciWidthOR
-      title: Confidence level
-      type: Number
-      min: 50
-      max: 99.9
-      default: 95
-      description:
-          R: >
-            a number between 50 and 99.9 (default: 95) specifying the confidence
-            interval width
-
-    - name: orTable
-      title: Odds ratios only
-      type: Bool
-      default: false
-      description:
-          R: >
-            `TRUE` or `FALSE` (default), show the model coefficients as odds
-            ratios, their confidence interval and p only, with p last
-            (replaces the estimate, SE and Z columns)
+            a number between 50 and 99.9 (default: 95) specifying the width of
+            the confidence intervals of the odds ratios
 
     - name: collin
       title: Collinearity statistics

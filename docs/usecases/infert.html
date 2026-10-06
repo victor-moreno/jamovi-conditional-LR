@@ -477,7 +477,7 @@ div.csl-indent {
 <ol type="1">
 <li>Open the data and choose <strong>Analyses ▸ Regression ▸ Logistic Regression ▸ Conditional (Matched)</strong>.</li>
 <li>Move <code>case</code> to <strong>Dependent Variable</strong>, <code>stratum</code> to <strong>Matching Variable</strong>, and <code>spontaneous</code> and <code>induced</code> to <strong>Covariates</strong>.</li>
-<li>In <strong>Model Coefficients</strong>, tick <strong>Odds ratio</strong> and its <strong>Confidence interval</strong>. In <strong>Model Fit</strong>, tick <strong>Overall model test</strong>.</li>
+<li>In <strong>Model Fit</strong>, tick <strong>Overall model test</strong>. The odds ratios, with their 95% confidence intervals, are in the coefficient table by default.</li>
 </ol>
 <div class="cell">
 <div class="cell-output-display">
@@ -506,7 +506,6 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.</p>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm jtab caption-top table-striped small">
@@ -534,47 +533,39 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Models estimated using N=248 observations in 83 matched sets</p>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm jtab caption-top table-striped small">
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Z</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">spontaneous</td>
-<td style="text-align: right;">1.986</td>
-<td style="text-align: right;">0.352</td>
-<td style="text-align: right;">5.635</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">7.285</td>
 <td style="text-align: right;">3.651</td>
 <td style="text-align: right;">14.536</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">induced</td>
-<td style="text-align: right;">1.409</td>
-<td style="text-align: right;">0.361</td>
-<td style="text-align: right;">3.906</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">4.092</td>
 <td style="text-align: right;">2.018</td>
 <td style="text-align: right;">8.298</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Estimates represent the log odds of "case = 1" vs. "case = 0", conditional on the matched sets</p>
 </div>
 </div>
 <p>The matched-set table confirms the design: 82 sets of a case and two controls, one set with a single control, all informative. Each spontaneous abortion multiplies the odds of infertility by 7.29 (95% CI 3.65–14.54), and each induced abortion by 4.09 (2.02–8.30). Both effects hold among women of the same age, parity and education.</p>
@@ -640,60 +631,49 @@ div.csl-indent {
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Z</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">induced</td>
-<td style="text-align: right;">1.405</td>
-<td style="text-align: right;">0.361</td>
-<td style="text-align: right;">3.891</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">4.076</td>
 <td style="text-align: right;">2.008</td>
 <td style="text-align: right;">8.274</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">spontaneous_f:</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.000</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;"></td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1 – 0</td>
-<td style="text-align: right;">2.047</td>
-<td style="text-align: right;">0.451</td>
-<td style="text-align: right;">4.540</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">7.744</td>
 <td style="text-align: right;">3.200</td>
 <td style="text-align: right;">18.736</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2 – 0</td>
-<td style="text-align: right;">3.933</td>
-<td style="text-align: right;">0.724</td>
-<td style="text-align: right;">5.434</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">51.082</td>
 <td style="text-align: right;">12.362</td>
 <td style="text-align: right;">211.088</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Estimates represent the log odds of "case = 1" vs. "case = 0", conditional on the matched sets</p>
 </div>
 </div>
 <p>Against women with no spontaneous abortion, one multiplies the odds by 7.7 and two or more by 51.1 (12.4–211.1). The covariate coding implied 7.3 for one and 7.3² ≈ 53 for two. The factor agrees with it, so the simpler per-abortion odds ratio describes these data well.</p>
@@ -707,50 +687,50 @@ div.csl-indent {
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Z</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">spontaneous</td>
-<td style="text-align: right;">1.963</td>
-<td style="text-align: right;">0.353</td>
-<td style="text-align: right;">5.565</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">7.121</td>
+<td style="text-align: right;">3.567</td>
+<td style="text-align: right;">14.217</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">induced</td>
-<td style="text-align: right;">0.411</td>
-<td style="text-align: right;">1.830</td>
-<td style="text-align: right;">0.225</td>
-<td style="text-align: right;">.822</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">1.508</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">54.462</td>
+<td style="text-align: right;">.822</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">age</td>
-<td style="text-align: right;"></td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 <td style="text-align: right;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">induced:age</td>
-<td style="text-align: right;">0.032</td>
-<td style="text-align: right;">0.057</td>
-<td style="text-align: right;">0.554</td>
-<td style="text-align: right;">.579</td>
+<td style="text-align: left;">induced × age</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">1.032</td>
+<td style="text-align: right;">0.923</td>
+<td style="text-align: right;">1.154</td>
+<td style="text-align: right;">.579</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Estimates represent the log odds of "case = 1" vs. "case = 0", conditional on the matched sets Not estimable: age. A predictor that does not vary within the matched sets (e.g. a matching variable) or that is collinear with others cannot be estimated by conditional logistic regression.</p>
+<p class="jnote"><i>Note.</i> Not estimable: age. A predictor that does not vary within the matched sets (e.g. a matching variable) or that is collinear with others cannot be estimated by conditional logistic regression.</p>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm jtab caption-top table-striped small">

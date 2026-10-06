@@ -209,32 +209,45 @@ clrSetComposition <- function(event, strata) {
 }
 
 # Descriptive table by case/control status. `event` is 1 for cases and 0 for
-# controls; `covs` and `factors` are named lists of the analysed columns (a
-# factor keeps its original level order). Returns one row per covariate and per
-# factor level, with formatted text: mean ± SD for covariates, n (%) for
-# factor levels with percentages within controls, cases and the total.
+# controls; `covs` and `factors` are named lists of columns (a factor keeps its
+# original level order) and may hold missing values. Returns one row per
+# covariate and per factor level, with formatted text: mean ± SD for
+# covariates, n (%) for factor levels with percentages of the non-missing
+# values within controls, cases and the total; and a "Missing" row, n (% of
+# the column), only for a variable with any missing value. `key` identifies
+# the row (".cov<name>", ".fac<name>.<k>", ".na<name>"), `type` its kind.
 clrDescriptives <- function(event, covs = list(), factors = list()) {
     groups <- list(ctrl = event == 0, cases = event == 1, total = rep(TRUE, length(event)))
     rows <- list()
+    add <- function(key, type, var, level, cells)
+        rows[[length(rows) + 1]] <<- data.frame(key = key, type = type, var = var,
+                                                level = level, cells,
+                                                stringsAsFactors = FALSE)
+    missingRow <- function(name, x) {
+        if (any(is.na(x)))
+            add(paste0(".na", name), "missing", name, NA_character_,
+                lapply(groups, function(g) clrNPct(sum(is.na(x[g])), sum(g))))
+    }
     for (name in names(covs)) {
         x <- covs[[name]]
-        cells <- lapply(groups, function(g) clrMeanSD(x[g]))
-        rows[[length(rows) + 1]] <- data.frame(var = name, level = "", cells,
-                                               stringsAsFactors = FALSE)
+        add(paste0(".cov", name), "cov", name, NA_character_,
+            lapply(groups, function(g) clrMeanSD(x[g & ! is.na(x)])))
+        missingRow(name, x)
     }
     for (name in names(factors)) {
         x <- factors[[name]]
         levs <- levels(x)
         cells <- lapply(groups, function(g) {
             n <- as.vector(table(factor(x[g], levels = levs)))
-            clrNPct(n, sum(g))
+            clrNPct(n, sum(g & ! is.na(x)))
         })
-        rows[[length(rows) + 1]] <- data.frame(var = name, level = levs, cells,
-                                               stringsAsFactors = FALSE)
+        add(paste0(".fac", name, ".", seq_along(levs)), "level", name, levs, cells)
+        missingRow(name, x)
     }
     if (length(rows) == 0)
-        return(data.frame(var = character(), level = character(), ctrl = character(),
-                          cases = character(), total = character()))
+        return(data.frame(key = character(), type = character(), var = character(),
+                          level = character(), ctrl = character(), cases = character(),
+                          total = character()))
     do.call(rbind, rows)
 }
 
@@ -253,4 +266,21 @@ clrMeanSD <- function(x) {
     s <- stats::sd(x)
     d <- if (is.finite(m) && max(abs(m), s, na.rm = TRUE) >= 100) 1 else 2
     sprintf("%.*f \u00b1 %.*f", d, m, d, s)
+}
+
+# p of a trend test: the factor replaced by numeric scores (`scores`, its
+# level order) in the model given by `rhsTerms` (one string per term), the
+# other terms unchanged; Wald test of the score, as for any coefficient. NA
+# when the factor is part of an interaction (no single trend to test) or when
+# the score cannot be estimated (e.g. constant within the matched sets).
+clrTrendP <- function(rhsTerms, factor, scores, data, ties = "exact") {
+    parts <- strsplit(rhsTerms, ":", fixed = TRUE)
+    if (any(vapply(parts, function(p) length(p) > 1 && factor %in% p, logical(1))))
+        return(NA_real_)
+    data$.TREND <- scores
+    rhs <- paste(replace(rhsTerms, rhsTerms == factor, ".TREND"), collapse = " + ")
+    tab <- clrCoefTable(clrFit(rhs, data, ties))
+    if (! ".TREND" %in% rownames(tab))
+        return(NA_real_)
+    tab[".TREND", "p"]
 }

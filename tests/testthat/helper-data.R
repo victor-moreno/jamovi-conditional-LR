@@ -11,5 +11,9 @@ runClr <- function(data, ...) {
 }
 
 coefDF <- function(results, model = 1) {
-    results$models[[model]]$coef$asDF
+    tb <- results$models[[model]]$coef$asDF
+    # asDF holds the visible columns only: est (log OR) is hidden by default
+    if (is.null(tb$est) && ! is.null(tb$or))
+        tb$est <- suppressWarnings(log(as.numeric(tb$or)))
+    tb
 }

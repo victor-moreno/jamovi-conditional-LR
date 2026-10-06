@@ -466,11 +466,12 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p>The rest of the panel is the one jmv users know: <strong>Model Builder</strong> (blocks of predictors, interactions), <strong>Reference Levels</strong>, <strong>Assumption Checks</strong> (collinearity), <strong>Model Fit</strong> (deviance, AIC, BIC, pseudo R², overall test) and <strong>Model Coefficients</strong> (omnibus likelihood ratio tests, estimates and odds ratios with confidence intervals). Three parts are new:</p>
+<p>The rest of the panel is the one jmv users know: <strong>Model Builder</strong> (blocks of predictors, interactions), <strong>Reference Levels</strong>, <strong>Assumption Checks</strong> (collinearity), <strong>Model Fit</strong> (deviance, AIC, BIC, pseudo R², overall test) and <strong>Model Coefficients</strong> (omnibus likelihood ratio tests). Several parts are new or laid out differently:</p>
 <ul>
 <li><strong>Matching</strong>: the conditional likelihood, exact or approximate;</li>
-<li><strong>Descriptives</strong>: the matched-set table, and a descriptive table of every variable by case/control status;</li>
-<li><strong>Odds ratios only</strong>, in <em>Model Coefficients</em>: the odds ratio, its confidence interval and p, p last, as in a published table.</li>
+<li><strong>Descriptives</strong>: the matched-set table, and a descriptive table of every variable by case/control status, with its missing values;</li>
+<li><strong>Model Coefficients</strong>: one row per level, with the reference level at OR = 1 and the odds ratio, its confidence interval and p for the others; univariable beside multivariable odds ratios, a trend test and a forest plot on request;</li>
+<li><strong>Options</strong>: <em>Show notes</em>, the explanations under each table (off by default).</li>
 </ul>
 <p>A first result, with the module’s bundled data set (<em>Infertility after abortion</em>, R’s <code>infert</code>): 248 women in 83 matched sets, each infertile case matched with up to two fertile controls on age, parity and education <span class="citation" data-cites="trichopoulos1976">(<a href="#ref-trichopoulos1976" role="doc-biblioref">Trichopoulos et al. 1976</a>)</span>.</p>
 <div class="cell">
@@ -500,47 +501,39 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.</p>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm jtab caption-top table-striped small">
 <caption>Model Coefficients - case</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Estimate</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">SE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Z</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">OR</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">spontaneous</td>
-<td style="text-align: right;">1.986</td>
-<td style="text-align: right;">0.352</td>
-<td style="text-align: right;">5.635</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">7.285</td>
 <td style="text-align: right;">3.651</td>
 <td style="text-align: right;">14.536</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">induced</td>
-<td style="text-align: right;">1.409</td>
-<td style="text-align: right;">0.361</td>
-<td style="text-align: right;">3.906</td>
-<td style="text-align: right;">&lt; .001</td>
+<td style="text-align: right;">per unit</td>
 <td style="text-align: right;">4.092</td>
 <td style="text-align: right;">2.018</td>
 <td style="text-align: right;">8.298</td>
+<td style="text-align: right;">&lt; .001</td>
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Estimates represent the log odds of "case = 1" vs. "case = 0", conditional on the matched sets</p>
 </div>
 </div>
 <p>Each previous spontaneous abortion multiplies the odds of secondary infertility by 7.29, and each induced abortion by 4.09, comparing women of the same age, parity and education.</p>
@@ -555,7 +548,7 @@ div.csl-indent {
 </section>
 <section id="install" class="level2">
 <h2 class="anchored" data-anchor-id="install">Install</h2>
-<p>The module is sideloaded from the <code>.jmo</code> files on the repository’s <a href="https://github.com/victor-moreno/jamovi-conditional-LR/releases">Releases</a> page, one per jamovi series and CPU: in jamovi, <em>Modules ▸ jamovi library ▸ Sideload</em>. It needs nothing beyond the packages bundled with jamovi (<code>jmvcore</code>, <code>R6</code> and <code>survival</code>).</p>
+<p>The module is sideloaded from the <code>.jmo</code> files on the repository’s <a href="https://github.com/victor-moreno/jamovi-conditional-LR/releases">Releases</a> page, one per jamovi series and CPU: in jamovi, <em>Modules ▸ jamovi library ▸ Sideload</em>. It needs nothing beyond the packages bundled with jamovi (<code>jmvcore</code>, <code>R6</code>, <code>ggplot2</code> and <code>survival</code>).</p>
 
 
 

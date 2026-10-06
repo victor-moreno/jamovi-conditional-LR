@@ -204,49 +204,34 @@ children:
         margin: large
         stretchFactor: 1
         children:
-          - type: LayoutBox
-            cell:
-              column: 0
-              row: 0
-            stretchFactor: 1
+          - type: Label
+            label: Odds Ratios
             children:
-              - type: Label
-                label: Omnibus Tests
-                children:
-                  - type: CheckBox
-                    name: omni
-              - type: Label
-                label: Estimate (Log Odds Ratio)
-                children:
-                  - type: CheckBox
-                    name: ci
-                    children:
-                      - type: TextBox
-                        name: ciWidth
-                        label: Interval
-                        suffix: '%'
-                        format: number
-                        enable: (ci)
-          - type: LayoutBox
-            cell:
-              column: 1
-              row: 0
-            stretchFactor: 1
+              - type: TextBox
+                name: ciWidth
+                label: Confidence interval
+                suffix: '%'
+                format: number
+              - type: CheckBox
+                name: uniMulti
+              - type: CheckBox
+                name: trend
+              - type: CheckBox
+                name: coefDetails
+              - type: CheckBox
+                name: forest
+          - type: Label
+            label: Omnibus Tests
             children:
-              - type: Label
-                label: Odds Ratio
-                children:
-                  - type: CheckBox
-                    name: OR
-                  - type: CheckBox
-                    name: ciOR
-                    enable: (OR)
-                    children:
-                      - type: TextBox
-                        name: ciWidthOR
-                        label: Interval
-                        suffix: '%'
-                        format: number
-                        enable: (ciOR)
-                  - type: CheckBox
-                    name: orTable
+              - type: CheckBox
+                name: omni
+  - type: CollapseBox
+    label: Options
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
+          - type: CheckBox
+            name: showNotes

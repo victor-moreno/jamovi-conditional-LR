@@ -6,7 +6,7 @@ d$case <- factor(d$case)
 r <- condLogReg::condLogReg(
     data = d, dep = "case", strata = "stratum",
     covs = c("spontaneous", "induced"),
-    blocks = list(list("spontaneous", "induced"))
+    blocks = list(list("spontaneous", "induced")), coefDetails = TRUE
 )
 tbl <- r$models[[1]]$coef$asDF
 d$one <- 1
