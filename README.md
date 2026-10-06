@@ -44,8 +44,11 @@ substitutes Wald tests for any model with strata), and the GVIF does not count t
 a term.
 
 A variable that is constant within every matched set (a matching factor) cancels from the
-conditional likelihood. Its rows stay empty, and a note explains why. Its interactions with
-other predictors are estimable.
+conditional likelihood. Its rows stay empty, and a note names it. Its interactions with
+other predictors are estimable. The module finds such columns itself (no variation within
+sets, or collinear with others after removing the set means) before fitting, because
+`coxph`'s own check depends on rounding: on Linux it estimated a matching variable entered
+alone as a meaningless coefficient.
 
 The module ships the data set **Infertility after abortion** (R's `datasets::infert`), a
 1:2 matched case-control study, in jamovi's Data Library.
@@ -108,6 +111,12 @@ This module has been developed with support of the Instituto de Salud Carlos III
 “Programa FORTALECE del Ministerio de Ciencia e Innovación”, through the project number
 FORT23/00032 and the Consortium for Biomedical Research in Epidemiology and Public Health
 (CIBERESP), action Genrisk.
+
+## Versions
+
+- **0.1.1** — aliased predictors (e.g. a matching variable) are detected by the module, so
+  they are reported the same on every platform; the note names them.
+- **0.1.0** — first version.
 
 ## Licence
 

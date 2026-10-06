@@ -8,28 +8,108 @@
 
 # Fit one model. `rhs` is the right-hand side (terms only, may be empty);
 # `data` holds the response columns .TIME/.EVENT and the set id .STRATA.
-# Warnings (e.g. infinite estimates under separation) are returned, not raised.
+#
+# The model matrix is built here and its aliased columns are found by
+# clrAliased() before fitting, instead of leaving that to coxph(): coxph's
+# check is relative to the information matrix itself, so a predictor that is
+# constant within every set (zero information up to rounding) was dropped on
+# macOS but estimated on Linux (jamovi in docker) as a meaningless coefficient
+# with SE ~1e6 when it was the only predictor. Columns are coded as coxph would
+# (treatment contrasts, intercept removed). Warnings (e.g. infinite estimates
+# under separation) are returned, not raised.
 clrFit <- function(rhs, data, ties = "exact") {
-    rhs <- if (length(rhs) == 0 || rhs == "") "" else paste(rhs, "+")
-    formula <- stats::as.formula(
-        paste("survival::Surv(.TIME, .EVENT) ~", rhs, "survival::strata(.STRATA)"))
+    y <- survival::Surv(data$.TIME, data$.EVENT)
+    sets <- data$.STRATA
+    if (length(rhs) == 0 || rhs == "") {
+        X <- matrix(numeric(0), nrow = nrow(data), ncol = 0)
+        assign <- integer(0)
+        labels <- character(0)
+    } else {
+        tt <- stats::terms(stats::as.formula(paste("~", rhs)))
+        mm <- stats::model.matrix(tt, data)
+        X <- mm[, -1, drop = FALSE]
+        assign <- attr(mm, "assign")[-1]
+        labels <- attr(tt, "term.labels")
+    }
+    aliased <- clrAliased(X, sets)
+
     warnings <- character()
-    fit <- withCallingHandlers(
-        survival::coxph(formula, data = data, method = ties, model = TRUE),
+    cox <- withCallingHandlers(
+        clrCox(X[, ! aliased, drop = FALSE], y, sets, ties),
         warning = function(w) {
             warnings <<- c(warnings, conditionMessage(w))
             invokeRestart("muffleWarning")
         })
-    fit$clrWarnings <- unique(warnings)
-    fit
+
+    coef <- stats::setNames(rep(NA_real_, ncol(X)), colnames(X))
+    var <- matrix(NA_real_, ncol(X), ncol(X), dimnames = list(colnames(X), colnames(X)))
+    if (any(! aliased)) {
+        coef[! aliased] <- cox$coefficients
+        var[! aliased, ! aliased] <- cox$var
+    }
+    ll <- cox$loglik
+    list(coefficients = coef, var = var, loglik = c(ll[1], ll[length(ll)]),
+         n = cox$n, nevent = cox$nevent, X = X, assign = assign, labels = labels,
+         aliased = aliased, y = y, sets = sets, ties = ties,
+         clrWarnings = unique(warnings))
+}
+
+# The stratified Cox fit on a numeric matrix (possibly with no columns, the
+# null model, whose loglik is a single value).
+clrCox <- function(X, y, sets, ties) {
+    if (ncol(X) == 0)
+        return(survival::coxph(y ~ survival::strata(sets), method = ties))
+    survival::coxph(y ~ X + survival::strata(sets), method = ties)
+}
+
+# Columns of the model matrix that the conditional likelihood cannot estimate:
+# no variation within any matched set (e.g. a matching variable), or a linear
+# combination of other columns after removing the set means. Judged on the
+# within-set deviations scaled by the column's overall spread, so the test does
+# not depend on rounding or on the units of the variable.
+clrAliased <- function(X, sets, tol = 1e-7) {
+    aliased <- rep(FALSE, ncol(X))
+    if (ncol(X) == 0)
+        return(aliased)
+    within <- apply(X, 2, function(x) x - stats::ave(x, sets))
+    within <- matrix(within, nrow = nrow(X))
+    spread <- sqrt(colSums(sweep(X, 2, colMeans(X))^2))
+    ratio <- sqrt(colSums(within^2)) / spread
+    aliased <- unname(! is.finite(ratio) | ratio < tol)
+    ok <- which(! aliased)
+    if (length(ok) > 1) {
+        q <- qr(sweep(within[, ok, drop = FALSE], 2, spread[ok], "/"), tol = tol)
+        if (q$rank < length(ok))
+            aliased[ok[q$pivot[-seq_len(q$rank)]]] <- TRUE
+    }
+    aliased
+}
+
+# Estimates, standard errors, Wald z and p for every column (NA if aliased).
+clrCoefTable <- function(fit) {
+    est <- fit$coefficients
+    se <- sqrt(diag(fit$var))
+    z <- est / se
+    data.frame(est = est, se = se, z = z, p = 2 * stats::pnorm(-abs(z)),
+               row.names = names(est))
+}
+
+# Wald confidence intervals, as confint() gives for a coxph/clogit fit.
+clrConfint <- function(fit, level = 0.95) {
+    tab <- clrCoefTable(fit)
+    q <- stats::qnorm(1 - (1 - level) / 2)
+    cbind(lower = tab$est - q * tab$se, upper = tab$est + q * tab$se)
+}
+
+# The terms whose columns are (at least partly) aliased.
+clrAliasedTerms <- function(fit) {
+    fit$labels[sort(unique(fit$assign[fit$aliased]))]
 }
 
 # Log-likelihoods of the null (beta = 0) and fitted model, and the number of
 # estimated (non-aliased) coefficients. A model with no terms has one loglik.
 clrLogLik <- function(fit) {
-    ll <- fit$loglik
-    k <- if (is.null(fit$coefficients)) 0L else sum(!is.na(fit$coefficients))
-    list(ll0 = ll[1], ll1 = ll[length(ll)], k = k)
+    list(ll0 = fit$loglik[1], ll1 = fit$loglik[2], k = sum(! is.na(fit$coefficients)))
 }
 
 # Fit measures, mirroring jmv's logRegBin: deviance = -2 logLik, AIC, BIC with
@@ -63,44 +143,24 @@ clrCompare <- function(fit1, fit2) {
     list(chi = chi, df = df, p = stats::pchisq(chi, df, lower.tail = FALSE))
 }
 
-# The model's terms without the strata, with their position among all term
-# labels: the model matrix's "assign" numbers terms counting strata(), which R
-# orders with the main effects, i.e. before any interaction.
-clrTerms <- function(fit) {
-    all <- attr(stats::terms(fit), "term.labels")
-    index <- which(! grepl("strata(", all, fixed = TRUE))
-    list(labels = all[index], index = index)
-}
-
 # Omnibus (type III) likelihood ratio test of each term: refit with that term's
 # columns removed from the model matrix, the coding of the others unchanged.
 # car::Anova cannot be used here: it substitutes Wald tests for any model with
 # strata, and stops on aliased coefficients (e.g. a matching factor).
-clrTermTests <- function(fit, ties = "exact") {
-    X <- stats::model.matrix(fit)
-    assign <- attr(X, "assign")
-    terms <- clrTerms(fit)
-    labels <- terms$labels
-    mf <- stats::model.frame(fit)
-    y <- mf[[1]]
-    sets <- mf[[grep("strata(", names(mf), fixed = TRUE)]]
+clrTermTests <- function(fit, ties = fit$ties) {
     est <- ! is.na(fit$coefficients)
-    llFull <- clrLogLik(fit)$ll1
+    llFull <- fit$loglik[2]
 
+    labels <- fit$labels
     out <- data.frame(term = labels, chi = NA_real_, df = NA_integer_, p = NA_real_)
     for (j in seq_along(labels)) {
-        drop <- assign == terms$index[j]
+        drop <- fit$assign == j
         df <- sum(drop & est)
         if (df == 0)
             next
         keep <- ! drop & est
-        if (any(keep)) {
-            Xr <- X[, keep, drop = FALSE]
-            red <- survival::coxph(y ~ Xr + survival::strata(sets), method = ties)
-            llRed <- clrLogLik(red)$ll1
-        } else {
-            llRed <- clrLogLik(fit)$ll0
-        }
+        red <- clrCox(fit$X[, keep, drop = FALSE], fit$y, fit$sets, ties)
+        llRed <- red$loglik[length(red$loglik)]
         out$chi[j] <- 2 * (llFull - llRed)
         out$df[j] <- df
         out$p[j] <- stats::pchisq(out$chi[j], df, lower.tail = FALSE)
@@ -114,13 +174,12 @@ clrTermTests <- function(fit, ties = "exact") {
 # is the ordinary VIF.
 clrVIF <- function(fit) {
     est <- ! is.na(fit$coefficients)
-    assign <- attr(stats::model.matrix(fit), "assign")[est]
-    terms <- clrTerms(fit)
-    labels <- terms$labels
-    R <- stats::cov2cor(as.matrix(stats::vcov(fit))[est, est, drop = FALSE])
+    assign <- fit$assign[est]
+    labels <- fit$labels
+    R <- stats::cov2cor(fit$var[est, est, drop = FALSE])
     detR <- det(R)
     vif <- vapply(seq_along(labels), function(j) {
-        idx <- which(assign == terms$index[j])
+        idx <- which(assign == j)
         if (length(idx) == 0)
             return(NA_real_)
         if (length(idx) == ncol(R))

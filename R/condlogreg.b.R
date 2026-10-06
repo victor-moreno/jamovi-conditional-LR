@@ -143,7 +143,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             ci <- list()
             for (i in seq_along(self$models)) {
-                ci[[i]] <- stats::confint(self$models[[i]], level=level)
+                ci[[i]] <- clrConfint(self$models[[i]], level=level)
                 if (type == "OR")
                     ci[[i]] <- exp(ci[[i]])
             }
@@ -392,10 +392,9 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             for (i in seq_along(termsAll)) {
                 table <- groups$get(key=i)$coef
 
-                model <- summary(self$models[[i]])
                 CI <- self$CICoefEst[[i]]
                 CIOR <- self$CICoefEstOR[[i]]
-                coef<- model$coefficients
+                coef <- clrCoefTable(self$models[[i]])
                 terms <- termsAll[[i]]
                 rowTerms <- jmvcore::decomposeTerms(rownames(coef))
 
@@ -406,22 +405,16 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     index <- which(length(term) == sapply(rowTerms, length) &
                                        sapply(rowTerms, function(x) all(term %in% x)))
 
-                    # coxph keeps aliased coefficients as NA rows, e.g. for a
-                    # predictor that is constant within every matched set
-                    if (length(index) != 1 || is.na(coef[index, 'coef'])) {
-                        table$setNote(
-                            "singular",
-                            .("Not all coefficients could be estimated: a predictor is constant within the matched sets (e.g. a matching factor) or collinear with others")
-                        )
+                    # aliased columns (clrAliased) stay NA and their rows empty
+                    if (length(index) != 1 || is.na(coef$est[index]))
                         next
-                    }
 
                     row <- list()
-                    row[["est"]] <- coef[index, 'coef']
-                    row[["se"]] <- coef[index, 'se(coef)']
-                    row[["odds"]] <- exp(coef[index, 'coef'])
-                    row[["z"]] <- coef[index, 'z']
-                    row[["p"]] <- coef[index, 'Pr(>|z|)']
+                    row[["est"]] <- coef$est[index]
+                    row[["se"]] <- coef$se[index]
+                    row[["odds"]] <- exp(coef$est[index])
+                    row[["z"]] <- coef$z[index]
+                    row[["p"]] <- coef$p[index]
                     row[["lower"]] <- CI[index, 1]
                     row[["upper"]] <- CI[index, 2]
                     row[["oddsLower"]] <- CIOR[index, 1]
@@ -429,6 +422,18 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
 
                     table$setRow(rowKey=jmvcore::composeTerm(term), values = row)
                 }
+
+                # name the terms that cannot be estimated, rather than only
+                # leaving their rows empty
+                aliased <- clrAliasedTerms(self$models[[i]])
+                if (length(aliased) > 0)
+                    table$setNote(
+                        "singular",
+                        jmvcore::format(
+                            .("Not estimable: {terms}. A predictor that does not vary within the matched sets (e.g. a matching variable) or that is collinear with others cannot be estimated by conditional logistic regression."),
+                            terms=private$.termNames(aliased)
+                        )
+                    )
 
                 # e.g. "Loglik converged before variable 1; coefficient may be
                 # infinite": separation within the matched sets
@@ -467,6 +472,14 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         },
 
         #### Helper functions ----
+        .termNames = function(labels) {
+            # model-matrix term labels (base64 names, ':' for interactions)
+            # back to the names the user sees
+            names <- vapply(labels, function(l) {
+                jmvcore::stringifyTerm(jmvcore::fromB64(jmvcore::decomposeTerm(l)))
+            }, '')
+            paste(names, collapse=', ')
+        },
         .getModelTerms = function() {
             if (is.null(private$.modelTerms)) {
                 blocks <- self$options$blocks
