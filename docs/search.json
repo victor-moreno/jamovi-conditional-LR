@@ -1,0 +1,368 @@
+[
+  {
+    "objectID": "usecases/infert.html",
+    "href": "usecases/infert.html",
+    "title": "Infertility after Abortion",
+    "section": "",
+    "text": "Trichopoulos and colleagues studied whether induced and spontaneous abortions increase the risk of secondary infertility (Trichopoulos et al. 1976). Each of 83 infertile women (the cases) was matched with two fertile women (the controls) of the same age, parity and education. One set has a single control. The data are R’s infert, and they ship with the module: in jamovi, Open ▸ Data Library ▸ Conditional Logistic Regression ▸ Infertility after abortion. Or download infert.csv.\n\n\n\n\n\n\n\nVariable\nContent\n\n\n\n\nstratum\nmatched set, 1–83\n\n\ncase\n1 = infertile (case), 0 = fertile (control)\n\n\nspontaneous, induced\nnumber of previous spontaneous / induced abortions (0, 1, 2 or more)\n\n\nage, parity, education\nthe matching factors\n\n\npooled_stratum\na coarser grouping of the sets, not used here",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/infert.html#the-study",
+    "href": "usecases/infert.html#the-study",
+    "title": "Infertility after Abortion",
+    "section": "",
+    "text": "Trichopoulos and colleagues studied whether induced and spontaneous abortions increase the risk of secondary infertility (Trichopoulos et al. 1976). Each of 83 infertile women (the cases) was matched with two fertile women (the controls) of the same age, parity and education. One set has a single control. The data are R’s infert, and they ship with the module: in jamovi, Open ▸ Data Library ▸ Conditional Logistic Regression ▸ Infertility after abortion. Or download infert.csv.\n\n\n\n\n\n\n\nVariable\nContent\n\n\n\n\nstratum\nmatched set, 1–83\n\n\ncase\n1 = infertile (case), 0 = fertile (control)\n\n\nspontaneous, induced\nnumber of previous spontaneous / induced abortions (0, 1, 2 or more)\n\n\nage, parity, education\nthe matching factors\n\n\npooled_stratum\na coarser grouping of the sets, not used here",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/infert.html#the-basic-analysis",
+    "href": "usecases/infert.html#the-basic-analysis",
+    "title": "Infertility after Abortion",
+    "section": "The basic analysis",
+    "text": "The basic analysis\n\nOpen the data and choose Analyses ▸ Regression ▸ Logistic Regression ▸ Conditional (Matched).\nMove case to Dependent Variable, stratum to Matching Variable, and spontaneous and induced to Covariates.\nIn Model Coefficients, tick Odds ratio and its Confidence interval. In Model Fit, tick Overall model test.\n\n\n\n\nMatched Sets\n\n\nCases\nControls\nSets\nObservations\n\n\n\n\n1\n1\n1\n2\n\n\n1\n2\n82\n246\n\n\n\nNote. 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.\n\n\n\nModel Fit Measures\n\n\nModel\nDeviance\nAIC\nR²-McF\nχ²\ndf\np\n\n\n\n\n1\n128.404\n132.404\n0.293\n53.154\n2\n&lt; .001\n\n\n\nNote. Models estimated using N=248 observations in 83 matched sets\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\nspontaneous\n1.986\n0.352\n5.635\n&lt; .001\n7.285\n3.651\n14.536\n\n\ninduced\n1.409\n0.361\n3.906\n&lt; .001\n4.092\n2.018\n8.298\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\nThe matched-set table confirms the design: 82 sets of a case and two controls, one set with a single control, all informative. Each spontaneous abortion multiplies the odds of infertility by 7.29 (95% CI 3.65–14.54), and each induced abortion by 4.09 (2.02–8.30). Both effects hold among women of the same age, parity and education.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/infert.html#a-count-as-a-factor",
+    "href": "usecases/infert.html#a-count-as-a-factor",
+    "title": "Infertility after Abortion",
+    "section": "A count as a factor",
+    "text": "A count as a factor\nEntering the number of abortions as a covariate assumes the same odds ratio for each additional one. To relax that for spontaneous abortions, enter it as a factor. In jamovi, spontaneous is a nominal integer, so it can go into Factors. Put induced in block 1 and the factor in block 2 of the Model Builder, so that the Model Comparisons table tests its addition. Then tick Likelihood ratio tests for the omnibus test of the factor.\n\n\n\nModel Comparisons\n\n\nModel\n\nModel\nχ²\ndf\np\n\n\n\n\n1\n-\n2\n53.079\n2\n&lt; .001\n\n\n\n\n\n\nOmnibus Likelihood Ratio Tests\n\n\nPredictor\nχ²\ndf\np\n\n\n\n\ninduced\n19.149\n1\n&lt; .001\n\n\nspontaneous_f\n53.079\n2\n&lt; .001\n\n\n\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\ninduced\n1.405\n0.361\n3.891\n&lt; .001\n4.076\n2.008\n8.274\n\n\nspontaneous_f:\n\n\n\n\n\n\n\n\n\n1 – 0\n2.047\n0.451\n4.540\n&lt; .001\n7.744\n3.200\n18.736\n\n\n2 – 0\n3.933\n0.724\n5.434\n&lt; .001\n51.082\n12.362\n211.088\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\nAgainst women with no spontaneous abortion, one multiplies the odds by 7.7 and two or more by 51.1 (12.4–211.1). The covariate coding implied 7.3 for one and 7.3² ≈ 53 for two. The factor agrees with it, so the simpler per-abortion odds ratio describes these data well.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/infert.html#matching-factors-and-effect-modification",
+    "href": "usecases/infert.html#matching-factors-and-effect-modification",
+    "title": "Infertility after Abortion",
+    "section": "Matching factors and effect modification",
+    "text": "Matching factors and effect modification\nAge was matched on. Add age to Covariates and to the model, and also the interaction induced * age: select both variables in the Model Builder and choose Interaction from the arrow’s menu.\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\n\n\n\n\nspontaneous\n1.963\n0.353\n5.565\n&lt; .001\n7.121\n\n\ninduced\n0.411\n1.830\n0.225\n.822\n1.508\n\n\nage\n\n\n\n\n\n\n\ninduced:age\n0.032\n0.057\n0.554\n.579\n1.032\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets Not all coefficients could be estimated: a predictor is constant within the matched sets (e.g. a matching factor) or collinear with others\n\n\n\nOmnibus Likelihood Ratio Tests\n\n\nPredictor\nχ²\ndf\np\n\n\n\n\nspontaneous\n51.069\n1\n&lt; .001\n\n\ninduced\n0.050\n1\n.822\n\n\nage\n\n\n\n\n\ninduced:age\n0.309\n1\n.579\n\n\n\nNote. A term with no estimable coefficient (e.g. a matching factor) is not tested\n\n\nage has no coefficient and no test. It is constant within every matched set, so it cancels from the conditional likelihood, and the note says so. The interaction is still estimable, because it asks whether the effect of induced abortions differs between sets of different ages, and that is a within-set contrast. Here there is no evidence of it (p = .579). With the interaction in the model, the induced row is the odds ratio at age 0, which has no practical meaning. Look at the interaction test, not at that row.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/infert.html#what-if-the-matching-is-ignored",
+    "href": "usecases/infert.html#what-if-the-matching-is-ignored",
+    "title": "Infertility after Abortion",
+    "section": "What if the matching is ignored?",
+    "text": "What if the matching is ignored?\nThe same coefficients from ordinary logistic regression (R’s glm) of the same data:\n\n\n\nAnalysis\nspontaneous OR\ninduced OR\n\n\n\n\nConditional (this module)\n7.29\n4.09\n\n\nUnconditional, matching ignored\n3.31\n1.52\n\n\nUnconditional, one indicator per set\n25.29\n8.94\n\n\nUnconditional, adjusted for age, parity and education\n7.74\n3.63\n\n\n\nIgnoring the matching shrinks both odds ratios to less than half, because the matching factors are related to the exposures. An indicator per matched set inflates them several-fold, which is the bias described in the method. Adjusting an unconditional model for the matching factors comes closer here, because the matching was on a few broad categories. The conditional analysis needs no such luck.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "Infertility after Abortion"
+    ]
+  },
+  {
+    "objectID": "usecases/index.html",
+    "href": "usecases/index.html",
+    "title": "Use Cases in jamovi",
+    "section": "",
+    "text": "Two matched case-control studies, analysed step by step with Analyses ▸ Regression ▸ Logistic Regression ▸ Conditional (Matched). Every table on these pages is computed by the module itself, so the numbers are the ones jamovi shows.\n\n\n\nUse case\nDesign\nShows\n\n\n\n\nInfertility after abortion\nreal data, 1:2 matching\nthe basic analysis; a count as a covariate or as a factor; a matching factor has no coefficient, but its interaction does; why the matching must not be ignored\n\n\nA nested case-control study\nsimulated, 1:4 with variable ratio\nreference levels of a text factor; blocks to see confounding; uninformative sets from missing values\n\n\n\nThe data can be downloaded as CSV and opened in jamovi. case is coded 0 (control) and 1 (case). jamovi reads it as a nominal integer with 0 as the first level, so 0 is the reference level and the odds ratios compare cases with controls without changing anything.\n\n\n\n Back to top",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html",
+    "href": "foundations/output.html",
+    "title": "Reading the Output",
+    "section": "",
+    "text": "The tables on this page come from one analysis of the infert data. Model 1 has the number of induced abortions; model 2 adds the number of spontaneous abortions, entered as a factor (0, 1, 2 or more).\nNotation: \\(\\ell_0\\) is the conditional log-likelihood at \\(\\boldsymbol\\beta = 0\\), \\(\\ell_1\\) its maximum, \\(k\\) the number of estimated coefficients, \\(n\\) the number of observations analysed and \\(d\\) the number of cases.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#matched-sets",
+    "href": "foundations/output.html#matched-sets",
+    "title": "Reading the Output",
+    "section": "Matched Sets",
+    "text": "Matched Sets\n\n\n\nMatched Sets\n\n\nCases\nControls\nSets\nObservations\n\n\n\n\n1\n1\n1\n2\n\n\n1\n2\n82\n246\n\n\n\nNote. 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.\n\n\nOne row for each composition of a set (cases, controls), with the number of sets and the observations in them. This table is the first thing to check:\n\na matching ratio you did not expect usually means the Matching Variable is wrong (for example, a variable that is not the set identifier);\nrows with 0 cases or 0 controls are uninformative sets. Usually missing values have removed every case or every control of the set. They do not enter the estimates, and the note gives how many sets are informative.\n\nThe counts are taken after removing the rows with a missing value in any variable of the analysis, as the models are fitted.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#model-fit-measures",
+    "href": "foundations/output.html#model-fit-measures",
+    "title": "Reading the Output",
+    "section": "Model Fit Measures",
+    "text": "Model Fit Measures\n\n\n\nModel Fit Measures\n\n\nModel\nDeviance\nAIC\nBIC\nR²-McF\nR²-CS\nR²-N\nχ²\ndf\np\n\n\n\n\n1\n181.436\n183.436\n185.854\n0.001\n0.000\n0.001\n0.123\n1\n.726\n\n\n2\n128.357\n134.357\n141.613\n0.293\n0.193\n0.372\n53.202\n3\n&lt; .001\n\n\n\nNote. Models estimated using N=248 observations in 83 matched sets\n\n\n\n\n\n\n\n\n\nColumn\nDefinition\n\n\n\n\nDeviance\n\\(-2\\ell_1\\)\n\n\nAIC\n\\(-2\\ell_1 + 2k\\)\n\n\nBIC\n\\(-2\\ell_1 + k\\log d\\): the number of cases is the sample size, as BIC() uses for a Cox model\n\n\nR²McF\nMcFadden: \\(1 - \\ell_1/\\ell_0\\)\n\n\nR²CS\nCox & Snell: \\(1 - \\exp\\{2(\\ell_0 - \\ell_1)/n\\}\\)\n\n\nR²N\nNagelkerke: R²CS divided by its maximum, \\(1 - \\exp(2\\ell_0/n)\\)\n\n\nOverall Model Test\nlikelihood ratio test of all coefficients against zero: \\(\\chi^2 = 2(\\ell_1 - \\ell_0)\\) on \\(k\\) df\n\n\n\nThe null model is \\(\\boldsymbol\\beta = 0\\): within each set, every subject is equally likely to be the case. The pseudo R² values therefore measure what the predictors explain within matched sets. They are not comparable with those of an unmatched logistic regression, whose null model has a single intercept.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#model-comparisons",
+    "href": "foundations/output.html#model-comparisons",
+    "title": "Reading the Output",
+    "section": "Model Comparisons",
+    "text": "Model Comparisons\n\n\n\nModel Comparisons\n\n\nModel\n\nModel\nχ²\ndf\np\n\n\n\n\n1\n-\n2\n53.079\n2\n&lt; .001\n\n\n\n\n\nLikelihood ratio test between consecutive blocks: \\(\\chi^2 = 2(\\ell_1^{(2)} - \\ell_1^{(1)})\\), on as many df as coefficients were added. Every model is fitted to the same observations (those complete for all the variables in any block), so the models are nested.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#omnibus-likelihood-ratio-tests",
+    "href": "foundations/output.html#omnibus-likelihood-ratio-tests",
+    "title": "Reading the Output",
+    "section": "Omnibus Likelihood Ratio Tests",
+    "text": "Omnibus Likelihood Ratio Tests\n\n\n\nOmnibus Likelihood Ratio Tests\n\n\nPredictor\nχ²\ndf\np\n\n\n\n\ninduced\n19.149\n1\n&lt; .001\n\n\nspontaneous_f\n53.079\n2\n&lt; .001\n\n\n\n\n\nOne test per term. The model is refitted without that term’s columns, and the fit is compared with the full model. A factor with several levels gets a single test on several df. With an interaction in the model, the test of a main effect depends on the reference levels, as in jmv.\nIn jmv’s logistic regression these tests come from car::Anova. Here they are computed by the module, because car substitutes Wald tests for any model with strata.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#model-coefficients",
+    "href": "foundations/output.html#model-coefficients",
+    "title": "Reading the Output",
+    "section": "Model Coefficients",
+    "text": "Model Coefficients\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nLower 95% CI\nUpper 95% CI\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\ninduced\n1.405\n0.697\n2.113\n0.361\n3.891\n&lt; .001\n4.076\n2.008\n8.274\n\n\nspontaneous_f:\n\n\n\n\n\n\n\n\n\n\n\n1 – 0\n2.047\n1.163\n2.930\n0.451\n4.540\n&lt; .001\n7.744\n3.200\n18.736\n\n\n2 – 0\n3.933\n2.515\n5.352\n0.724\n5.434\n&lt; .001\n51.082\n12.362\n211.088\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\n\nEstimate is the conditional log odds ratio. Odds ratio is its exponential. Both compare the non-reference level of the dependent variable (the cases) with the reference level (the controls) within matched sets.\nStandard errors, Z and p are Wald statistics, and the confidence intervals are Wald intervals (\\(\\hat\\beta \\pm z_{1-\\alpha/2}\\,\\mathrm{SE}\\), exponentiated for odds ratios), as confint() gives for clogit.\nFactors are coded against their reference level, which the Reference Levels box sets (default: the first level).\nThere is no intercept row (see the method).",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#collinearity-statistics",
+    "href": "foundations/output.html#collinearity-statistics",
+    "title": "Reading the Output",
+    "section": "Collinearity Statistics",
+    "text": "Collinearity Statistics\n\n\n\nCollinearity Statistics\n\n\n\nVIF\nTolerance\n\n\n\n\ninduced\n2.150\n0.465\n\n\nspontaneous_f\n2.150\n0.465\n\n\n\nNote. For terms with more than one coefficient the generalised VIF is shown\n\n\nVariance inflation factors from the correlation matrix of the estimated coefficients. For a term with more than one coefficient, such as a factor with three levels, the table gives the generalised VIF of the term as a whole (Fox and Monette 1992), with tolerance = 1/VIF. This is the formula of car::vif, except that the strata are not counted as a term.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "foundations/output.html#what-changed-from-jmvs-logistic-regression",
+    "href": "foundations/output.html#what-changed-from-jmvs-logistic-regression",
+    "title": "Reading the Output",
+    "section": "What changed from jmv’s logistic regression",
+    "text": "What changed from jmv’s logistic regression\n\n\n\n\n\n\n\njmv Binomial Logistic Regression\ncondLogReg\n\n\n\n\nglm(family = binomial)\ncoxph(... + strata(set), method = \"exact\"), as clogit\n\n\n—\nMatching Variable, Likelihood option, Matched Sets table\n\n\nintercept\nnone (absorbed by the matched sets)\n\n\nTjur’s R²\nremoved (needs fitted probabilities)\n\n\nomnibus tests from car::Anova\nlikelihood ratio tests computed by refitting\n\n\nVIF from car::vif\nthe same GVIF, with the strata excluded\n\n\nestimated marginal means\nremoved (need absolute probabilities)\n\n\nprediction: classification, ROC, AUC, cut-off\nremoved (need absolute probabilities)\n\n\nsaved predicted values, residuals, Cook’s distance\nremoved\n\n\ndata weights\nignored: a weight would break the matched sets",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "Reading the Output"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Conditional Logistic Regression in jamovi",
+    "section": "",
+    "text": "In a matched case-control study each case is compared with one or more controls chosen to resemble it on factors such as age, sex or place of residence. The matched sets are part of the design, and the analysis has to keep them: comparisons are made within sets, never across them. Conditional logistic regression does exactly that. It estimates odds ratios from the contrast between each case and its own controls, and the set-specific baseline risks, which a matched design cannot estimate, drop out of the likelihood (Breslow et al. 1978; Breslow and Day 1980).\nThe condLogReg module brings this analysis to jamovi. It is a clone of jmv’s Binomial Logistic Regression, with the same model builder, reference levels, fit measures and coefficient tables, plus a Matching Variable that identifies the matched sets. The model is fitted by the conditional likelihood, as a Cox model stratified by matched set: the same fit as R’s survival::clogit (Gail et al. 1981; Therneau and Grambsch 2000).",
+    "crumbs": [
+      "Home",
+      "Conditional Logistic Regression in jamovi"
+    ]
+  },
+  {
+    "objectID": "index.html#in-jamovi",
+    "href": "index.html#in-jamovi",
+    "title": "Conditional Logistic Regression in jamovi",
+    "section": "In jamovi",
+    "text": "In jamovi\nAnalyses ▸ Regression ▸ Logistic Regression ▸ Conditional (Matched)\n\n\n\n\n\n\n\nBox\nWhat goes in it\n\n\n\n\nDependent Variable\ncase/control status, a factor with two levels; its reference level is the control\n\n\nMatching Variable\nthe identifier of the matched set (stratum, pair, set number)\n\n\nCovariates\nnumeric exposures and confounders\n\n\nFactors\ncategorical exposures and confounders\n\n\n\nThe rest of the panel is the one jmv users know: Model Builder (blocks of predictors, interactions), Reference Levels, Matching (the likelihood and the matched-set table), Assumption Checks (collinearity), Model Fit (deviance, AIC, BIC, pseudo R², overall test) and Model Coefficients (omnibus likelihood ratio tests, estimates and odds ratios with confidence intervals).\nA first result, with the module’s bundled data set (Infertility after abortion, R’s infert): 248 women in 83 matched sets, each infertile case matched with up to two fertile controls on age, parity and education (Trichopoulos et al. 1976).\n\n\n\nMatched Sets\n\n\nCases\nControls\nSets\nObservations\n\n\n\n\n1\n1\n1\n2\n\n\n1\n2\n82\n246\n\n\n\nNote. 83 matched sets, 83 informative. Sets without a case or without a control do not contribute to the conditional likelihood.\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\nspontaneous\n1.986\n0.352\n5.635\n&lt; .001\n7.285\n3.651\n14.536\n\n\ninduced\n1.409\n0.361\n3.906\n&lt; .001\n4.092\n2.018\n8.298\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\nEach previous spontaneous abortion multiplies the odds of secondary infertility by 7.29, and each induced abortion by 4.09, comparing women of the same age, parity and education.",
+    "crumbs": [
+      "Home",
+      "Conditional Logistic Regression in jamovi"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-in-this-tutorial",
+    "href": "index.html#what-is-in-this-tutorial",
+    "title": "Conditional Logistic Regression in jamovi",
+    "section": "What is in this tutorial",
+    "text": "What is in this tutorial\n\nMethod: why matched data need a conditional analysis, the conditional likelihood, its equivalence with a stratified Cox model, and what can and cannot be estimated.\nReading the output: every table and option of the analysis, how each number is computed, and what changed from jmv’s logistic regression.\nUse cases in jamovi: two studies analysed step by step, with their data to download.",
+    "crumbs": [
+      "Home",
+      "Conditional Logistic Regression in jamovi"
+    ]
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "Conditional Logistic Regression in jamovi",
+    "section": "Install",
+    "text": "Install\nThe module is sideloaded from the .jmo files on the repository’s Releases page, one per jamovi series and CPU: in jamovi, Modules ▸ jamovi library ▸ Sideload. It needs nothing beyond the packages bundled with jamovi (jmvcore, R6 and survival).",
+    "crumbs": [
+      "Home",
+      "Conditional Logistic Regression in jamovi"
+    ]
+  },
+  {
+    "objectID": "foundations/method.html",
+    "href": "foundations/method.html",
+    "title": "The Method",
+    "section": "",
+    "text": "Matching makes cases and controls alike on the matching factors, which removes their confounding by design, and the design has to be carried into the analysis. The model behind a matched study gives each matched set \\(i\\) its own baseline odds of being a case:\n\\[\n\\operatorname{logit} P(Y_{ij} = 1) = \\alpha_i + \\boldsymbol{x}_{ij}^\\top \\boldsymbol\\beta,\n\\]\nwhere \\(j\\) indexes the subjects of set \\(i\\) and \\(\\boldsymbol\\beta\\) holds the log odds ratios of interest. The \\(\\alpha_i\\) absorb everything shared within the set: the matching factors and whatever else they stand for.\nTwo analyses look natural and are both wrong:\n\nIgnoring the matching (an ordinary logistic regression of case status on the exposures) drops the \\(\\alpha_i\\). When the matching factors are related to the exposure, which is why they were matched on, the estimate is usually biased towards the null.\nAdding one indicator per matched set to an ordinary logistic regression estimates every \\(\\alpha_i\\). But there are as many of them as sets, each from a handful of subjects, and the maximum likelihood estimate of \\(\\boldsymbol\\beta\\) is not consistent in this setting (Andersen 1970). For pairs (1:1) it converges to \\(2\\boldsymbol\\beta\\): the odds ratio is squared (Breslow and Day 1980).",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "The Method"
+    ]
+  },
+  {
+    "objectID": "foundations/method.html#matching-and-its-analysis",
+    "href": "foundations/method.html#matching-and-its-analysis",
+    "title": "The Method",
+    "section": "",
+    "text": "Matching makes cases and controls alike on the matching factors, which removes their confounding by design, and the design has to be carried into the analysis. The model behind a matched study gives each matched set \\(i\\) its own baseline odds of being a case:\n\\[\n\\operatorname{logit} P(Y_{ij} = 1) = \\alpha_i + \\boldsymbol{x}_{ij}^\\top \\boldsymbol\\beta,\n\\]\nwhere \\(j\\) indexes the subjects of set \\(i\\) and \\(\\boldsymbol\\beta\\) holds the log odds ratios of interest. The \\(\\alpha_i\\) absorb everything shared within the set: the matching factors and whatever else they stand for.\nTwo analyses look natural and are both wrong:\n\nIgnoring the matching (an ordinary logistic regression of case status on the exposures) drops the \\(\\alpha_i\\). When the matching factors are related to the exposure, which is why they were matched on, the estimate is usually biased towards the null.\nAdding one indicator per matched set to an ordinary logistic regression estimates every \\(\\alpha_i\\). But there are as many of them as sets, each from a handful of subjects, and the maximum likelihood estimate of \\(\\boldsymbol\\beta\\) is not consistent in this setting (Andersen 1970). For pairs (1:1) it converges to \\(2\\boldsymbol\\beta\\): the odds ratio is squared (Breslow and Day 1980).",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "The Method"
+    ]
+  },
+  {
+    "objectID": "foundations/method.html#the-conditional-likelihood",
+    "href": "foundations/method.html#the-conditional-likelihood",
+    "title": "The Method",
+    "section": "The conditional likelihood",
+    "text": "The conditional likelihood\nThe way out is to condition on what each set contributes to the design: the number of cases it contains. For a set with one case (subject 1) and \\(M\\) controls, the probability that the case is the subject it is, given that exactly one of the \\(M+1\\) is a case, is\n\\[\nL_i(\\boldsymbol\\beta) = \\frac{\\exp(\\boldsymbol{x}_{i1}^\\top \\boldsymbol\\beta)}\n{\\sum_{j=1}^{M+1} \\exp(\\boldsymbol{x}_{ij}^\\top \\boldsymbol\\beta)}.\n\\]\nThe \\(\\alpha_i\\) cancel. The conditional likelihood is the product of the \\(L_i\\) over the sets, and maximising it gives consistent estimates of \\(\\boldsymbol\\beta\\) however many sets there are (Breslow et al. 1978). With \\(k\\) cases in a set the denominator runs over all \\(\\binom{M+k}{k}\\) ways of choosing \\(k\\) subjects from the set.\n\nThe same likelihood as a stratified Cox model\n\\(L_i\\) has the form of the partial likelihood of a Cox model at a single event time: the case is “the one who failed” and its set is the risk set. So a conditional logistic regression is a Cox model stratified by matched set, in which every subject has the same follow-up time and the cases are the events. With several cases per set they are events tied at that time, and the exact treatment of ties is exactly the conditional likelihood above (Gail et al. 1981). That is what R’s survival::clogit does, and what this module does:\ncoxph(Surv(rep(1, n), case) ~ x1 + x2 + strata(set), method = \"exact\")\n\n\nExact or approximate\nThe Likelihood option of the Matching box chooses how ties are handled:\n\n\n\n\n\n\n\n\nOption\nWhat it is\nWhen\n\n\n\n\nExact conditional (default)\nthe conditional likelihood itself\nalways correct\n\n\nEfron approximation\nEfron’s approximation to it\nsets with many cases, where the exact sum gets slow\n\n\nBreslow approximation\nBreslow’s approximation to it\nthe same, cruder\n\n\n\nWith one case per set (1:1 or 1:M matching) there are no ties, and the three give identical results. They differ only when a set holds several cases.\nFor example, with 60 simulated sets of 2 cases and 4 controls, the log odds ratio of a continuous exposure is 0.647 (exact), 0.543 (Efron) and 0.486 (Breslow): both approximations are attenuated towards zero, Breslow’s more. With a third of each set being cases this is a large share of ties, so keep the exact likelihood unless it is too slow.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "The Method"
+    ]
+  },
+  {
+    "objectID": "foundations/method.html#what-can-and-cannot-be-estimated",
+    "href": "foundations/method.html#what-can-and-cannot-be-estimated",
+    "title": "The Method",
+    "section": "What can and cannot be estimated",
+    "text": "What can and cannot be estimated\nEverything shared within a set is absorbed by the \\(\\alpha_i\\), and so:\n\nThere is no intercept and no absolute risk. The model estimates odds ratios only. This is why the module has no predicted probabilities, classification table, ROC curve or estimated marginal means: those parts of jmv’s logistic regression need the \\(\\alpha_i\\).\nA matching factor has no coefficient. A variable that is constant within every set (the matching variables, or anything determined by them) cancels from \\(L_i\\). The module leaves its rows empty and says so in a note.\nIts interactions with an exposure are estimable. Whether the odds ratio of an exposure changes with age, say, is a within-set contrast. Add the interaction in the Model Builder.\nSets without a case or without a control contribute nothing, because their \\(L_i\\) equals 1. The Matched Sets table counts them. They arise when missing values remove all the cases or all the controls of a set.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "The Method"
+    ]
+  },
+  {
+    "objectID": "foundations/method.html#does-it-matter-a-simulation",
+    "href": "foundations/method.html#does-it-matter-a-simulation",
+    "title": "The Method",
+    "section": "Does it matter? A simulation",
+    "text": "Does it matter? A simulation\nThe figure shows 200 simulated studies for each matching ratio, with 100 matched sets each. The true odds ratio of a binary exposure is 2 (dashed line), and the matching factor is strongly related to the exposure. Points are median estimates; bars span the quartiles.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 1: Odds ratio estimates from the conditional analysis, from ordinary logistic regression with one indicator per matched set, and from ordinary logistic regression ignoring the matching.\n\n\n\nThe conditional estimate is centred on the truth at every ratio. With set indicators the odds ratio is about squared for pairs, and the bias shrinks as more controls are matched to each case. Ignoring the matching biases the estimate towards 1 at every ratio.",
+    "crumbs": [
+      "Home",
+      "Foundations",
+      "The Method"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Andersen, Erling Bernhard. 1970. “Asymptotic Properties of Conditional Maximum-Likelihood Estimators.” Journal of the Royal Statistical Society: Series B (Methodological) 32 (2): 283–301. https://doi.org/10.1111/j.2517-6161.1970.tb00842.x.\n\n\nBreslow, N. E., and N. E. Day. 1980. Statistical Methods in Cancer Research. Volume I: The Analysis of Case-Control Studies. IARC Scientific Publications 32. International Agency for Research on Cancer.\n\n\nBreslow, N. E., N. E. Day, K. T. Halvorsen, R. L. Prentice, and C. Sabai. 1978. “Estimation of Multiple Relative Risk Functions in Matched Case-Control Studies.” American Journal of Epidemiology 108 (4): 299–307. https://doi.org/10.1093/oxfordjournals.aje.a112623.\n\n\nFox, John, and Georges Monette. 1992. “Generalized Collinearity Diagnostics.” Journal of the American Statistical Association 87 (417): 178–83. https://doi.org/10.1080/01621459.1992.10475190.\n\n\nGail, Mitchell H., Jay H. Lubin, and Lawrence V. Rubinstein. 1981. “Likelihood Calculations for Matched Case-Control Studies and Survival Studies with Tied Death Times.” Biometrika 68 (3): 703–7. https://doi.org/10.1093/biomet/68.3.703.\n\n\nHosmer, David W., Stanley Lemeshow, and Rodney X. Sturdivant. 2013. Applied Logistic Regression. 3rd ed. Wiley. https://doi.org/10.1002/9781118548387.\n\n\nPearce, Neil. 2016. “Analysis of Matched Case-Control Studies.” BMJ 352: i969. https://doi.org/10.1136/bmj.i969.\n\n\nTherneau, Terry M., and Patricia M. Grambsch. 2000. Modeling Survival Data: Extending the Cox Model. Springer. https://doi.org/10.1007/978-1-4757-3294-8.\n\n\nTrichopoulos, D., N. Handanos, J. Danezis, Anna Kalandidi, and Victoria Kalapothaki. 1976. “Induced Abortion and Secondary Infertility.” British Journal of Obstetrics and Gynaecology 83 (8): 645–50. https://doi.org/10.1111/j.1471-0528.1976.tb00904.x.\n\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Home",
+      "References"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html",
+    "href": "usecases/nested.html",
+    "title": "A Nested Case-Control Study",
+    "section": "",
+    "text": "These data are simulated, so that the true odds ratios are known. They mimic a case-control study nested in a cohort. For each of 200 people who developed a disease (the cases), four controls were drawn from the members of the cohort of the same sex and age group who were still free of it. In some sets only two or three suitable controls were found. Download nested.csv.\n\n\n\nVariable\nContent\n\n\n\n\nset\nmatched set, 1–200\n\n\ncase\n1 = case, 0 = control\n\n\nsex, agegrp\nthe matching factors\n\n\nsmoking\nnever, former, current\n\n\ncoffee\ncups per day (missing for 8 subjects)\n\n\nactive\nphysically active: yes, no\n\n\n\nThe data were generated with true odds ratios of 1.5 for former and 2.5 for current smoking (both against never), 0.6 for being active, and 1 for coffee. But smokers drink more coffee (on average 2.8 cups a day for current smokers against 1.6 for never smokers), so smoking confounds the effect of coffee.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html#the-study",
+    "href": "usecases/nested.html#the-study",
+    "title": "A Nested Case-Control Study",
+    "section": "",
+    "text": "These data are simulated, so that the true odds ratios are known. They mimic a case-control study nested in a cohort. For each of 200 people who developed a disease (the cases), four controls were drawn from the members of the cohort of the same sex and age group who were still free of it. In some sets only two or three suitable controls were found. Download nested.csv.\n\n\n\nVariable\nContent\n\n\n\n\nset\nmatched set, 1–200\n\n\ncase\n1 = case, 0 = control\n\n\nsex, agegrp\nthe matching factors\n\n\nsmoking\nnever, former, current\n\n\ncoffee\ncups per day (missing for 8 subjects)\n\n\nactive\nphysically active: yes, no\n\n\n\nThe data were generated with true odds ratios of 1.5 for former and 2.5 for current smoking (both against never), 0.6 for being active, and 1 for coffee. But smokers drink more coffee (on average 2.8 cups a day for current smokers against 1.6 for never smokers), so smoking confounds the effect of coffee.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html#step-1-the-reference-level-of-a-text-factor",
+    "href": "usecases/nested.html#step-1-the-reference-level-of-a-text-factor",
+    "title": "A Nested Case-Control Study",
+    "section": "Step 1: the reference level of a text factor",
+    "text": "Step 1: the reference level of a text factor\n\nAnalyses ▸ Regression ▸ Logistic Regression ▸ Conditional (Matched). case to Dependent Variable, set to Matching Variable, coffee to Covariates, smoking and active to Factors.\n\njamovi orders the levels of a text variable alphabetically, so smoking starts with current, and that becomes the reference level:\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\n\n\n\n\nsmoking:\n\n\n\n\n\n\n\nformer – current\n-0.411\n0.192\n-2.141\n.032\n0.663\n\n\nnever – current\n-0.935\n0.203\n-4.596\n&lt; .001\n0.393\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\nThese odds ratios are correct, but they compare the wrong way round for this question. Open Reference Levels and set never for smoking (and no for active).",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html#step-2-blocks-to-see-confounding",
+    "href": "usecases/nested.html#step-2-blocks-to-see-confounding",
+    "title": "A Nested Case-Control Study",
+    "section": "Step 2: blocks to see confounding",
+    "text": "Step 2: blocks to see confounding\n\nIn the Model Builder, keep coffee in block 1. Click Add New Block and move smoking and active into block 2.\nIn Model Coefficients, tick Odds ratio with its Confidence interval, and Likelihood ratio tests.\n\n\n\n\nMatched Sets\n\n\nCases\nControls\nSets\nObservations\n\n\n\n\n0\n4\n2\n8\n\n\n1\n2\n16\n48\n\n\n1\n3\n34\n136\n\n\n1\n4\n148\n740\n\n\n\nNote. 200 matched sets, 198 informative. Sets without a case or without a control do not contribute to the conditional likelihood.\n\n\n\nModel Comparisons\n\n\nModel\n\nModel\nχ²\ndf\np\n\n\n\n\n1\n-\n2\n20.288\n3\n&lt; .001\n\n\n\n\n\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\ncoffee\n0.180\n0.074\n2.443\n.015\n1.197\n1.036\n1.384\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\n\nModel Coefficients - case\n\n\nPredictor\nEstimate\nSE\nZ\np\nOdds ratio\nLower 95% CI\nUpper 95% CI\n\n\n\n\ncoffee\n0.038\n0.083\n0.457\n.648\n1.039\n0.883\n1.222\n\n\nsmoking:\n\n\n\n\n\n\n\n\n\ncurrent – never\n0.847\n0.228\n3.710\n&lt; .001\n2.333\n1.491\n3.650\n\n\nformer – never\n0.525\n0.221\n2.370\n.018\n1.690\n1.095\n2.608\n\n\nactive:\n\n\n\n\n\n\n\n\n\nyes – no\n-0.412\n0.168\n-2.458\n.014\n0.662\n0.477\n0.920\n\n\n\nNote. Estimates represent the log odds of \"case = 1\" vs. \"case = 0\", conditional on the matched sets\n\n\nAlone (model 1), each daily cup of coffee seems to raise the odds of disease by 20% (OR 1.20, p = .015). Once smoking and activity are in the model (model 2), the odds ratio for coffee is 1.04 (0.88–1.22): the crude association was smoking. The smoking odds ratios, 2.33 for current and 1.69 for former smokers, and 0.66 for activity, are compatible with the values used to simulate the data. The model comparison (χ² = 20.3, 3 df, p = &lt; .001) tests both added terms together.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html#step-3-what-the-matched-set-table-tells",
+    "href": "usecases/nested.html#step-3-what-the-matched-set-table-tells",
+    "title": "A Nested Case-Control Study",
+    "section": "Step 3: what the matched-set table tells",
+    "text": "Step 3: what the matched-set table tells\nThe table above shows the variable matching ratio: 148 sets with four controls, 34 with three and 16 with two. The conditional likelihood handles any mix of ratios: no weighting or special option is needed.\nIt also shows 2 sets with no case. In those sets the case has no coffee value, so the case’s row is dropped. The controls left behind have nobody to be compared with, and those sets contribute nothing to the estimates. Whenever the table shows sets with 0 cases or 0 controls, check the missing values of the case and controls in those sets. If the variable with missing values is not needed, leaving it out of the analysis brings those sets back.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  },
+  {
+    "objectID": "usecases/nested.html#step-4-collinearity",
+    "href": "usecases/nested.html#step-4-collinearity",
+    "title": "A Nested Case-Control Study",
+    "section": "Step 4: collinearity",
+    "text": "Step 4: collinearity\nTick Collinearity statistics in Assumption Checks:\n\n\n\nCollinearity Statistics\n\n\n\nVIF\nTolerance\n\n\n\n\ncoffee\n1.238\n0.808\n\n\nsmoking\n1.239\n0.807\n\n\nactive\n1.002\n0.998\n\n\n\nNote. For terms with more than one coefficient the generalised VIF is shown\n\n\ncoffee and smoking are correlated, which is the confounding seen above, but their VIFs are far from the values (5 or 10) usually taken as a warning. smoking has two coefficients, so its VIF is the generalised VIF of the factor as a whole.",
+    "crumbs": [
+      "Home",
+      "Use Cases in jamovi",
+      "A Nested Case-Control Study"
+    ]
+  }
+]

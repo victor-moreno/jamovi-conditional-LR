@@ -17,8 +17,6 @@ build/
 .jmc-docker.jmo
 # local only, never pushed: development notes and plans (task_plan, findings, progress)
 documents/
-# tutorial: Quarto source is versioned; renders and caches are not (docs/ holds the site)
-tutorial/_site/
-tutorial/.quarto/
-tutorial/_freeze/
-tutorial/**/*_files/
+# tutorial: Quarto source, data generator and caches are local only; the
+# rendered site (docs/, GitHub Pages) is pushed
+tutorial/

@@ -1,0 +1,26 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.table {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+code {
+  font-size: 0.9em;
+}
+
+/* jamovi-like results tables */
+.jtab caption {
+  caption-side: top;
+  font-weight: 600;
+  color: inherit;
+}
+
+.jnote {
+  font-size: 0.85em;
+  opacity: 0.8;
+  margin-top: -0.75rem;
+}
