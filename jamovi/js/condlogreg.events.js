@@ -7,10 +7,12 @@ const events = {
 
         calcModelTerms(ui, this);
         updateLevelControls(ui, this);
+        updateScales(ui, this);
     },
 
     onChange_covs: function(ui) {
         calcBlocks(ui, this);
+        updateScales(ui, this);
     },
 
     onChange_dep:  function(ui) {
@@ -85,6 +87,25 @@ var updateContrasts = function(ui, variableList, context) {
     ui.refLevels.setValue(list3);
 };
 
+
+// one row per covariate in the Covariate Scaling list, keeping the scale
+// already chosen (as the reference levels list, and jmv's ANCOVA contrasts)
+let updateScales = function(ui, context) {
+    let covs = context.clone(ui.covs.value(), []);
+    let current = context.clone(ui.covScales.value(), []);
+    let list = [];
+    for (let i = 0; i < covs.length; i++) {
+        let found = null;
+        for (let j = 0; j < current.length; j++) {
+            if (current[j].var === covs[i]) {
+                found = current[j];
+                break;
+            }
+        }
+        list.push(found === null ? { var: covs[i], scale: "unit" } : found);
+    }
+    ui.covScales.setValue(list);
+};
 
 let updateModelLabels = function(list, blockName) {
     list.applyToItems(0, (item, index) => {

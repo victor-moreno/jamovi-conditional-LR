@@ -116,6 +116,35 @@ options:
             a list of lists specifying reference levels of the dependent variable
             and all the factors
 
+    - name: covScales
+      title: Covariate Scaling
+      type: Array
+      default:
+      template:
+          type: Group
+          elements:
+              - name: var
+                type: Variable
+              - name: scale
+                type: List
+                options:
+                  - name: unit
+                    title: per unit
+                  - name: sd
+                    title: per 1 SD
+                  - name: ten
+                    title: per 10 units
+                  - name: hundred
+                    title: per 100 units
+                  - name: thousand
+                    title: per 1000 units
+                default: unit
+      description:
+          R: >
+            a list of lists specifying, for each covariate, the unit of its odds
+            ratio: `'unit'` (default), `'sd'` (per one standard deviation, on
+            the rows of the model), `'ten'`, `'hundred'` or `'thousand'` units
+
     - name: ties
       title: Likelihood
       type: List

@@ -13,6 +13,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             blocks = list(
                 list()),
             refLevels = NULL,
+            covScales = NULL,
             ties = "exact",
             showNotes = FALSE,
             setSummary = TRUE,
@@ -93,6 +94,27 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         jmvcore::OptionLevel$new(
                             "ref",
                             NULL))))
+            private$..covScales <- jmvcore::OptionArray$new(
+                "covScales",
+                covScales,
+                default=NULL,
+                template=jmvcore::OptionGroup$new(
+                    "covScales",
+                    NULL,
+                    elements=list(
+                        jmvcore::OptionVariable$new(
+                            "var",
+                            NULL),
+                        jmvcore::OptionList$new(
+                            "scale",
+                            NULL,
+                            options=list(
+                                "unit",
+                                "sd",
+                                "ten",
+                                "hundred",
+                                "thousand"),
+                            default="unit"))))
             private$..ties <- jmvcore::OptionList$new(
                 "ties",
                 ties,
@@ -175,6 +197,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..factors)
             self$.addOption(private$..blocks)
             self$.addOption(private$..refLevels)
+            self$.addOption(private$..covScales)
             self$.addOption(private$..ties)
             self$.addOption(private$..showNotes)
             self$.addOption(private$..setSummary)
@@ -199,6 +222,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         factors = function() private$..factors$value,
         blocks = function() private$..blocks$value,
         refLevels = function() private$..refLevels$value,
+        covScales = function() private$..covScales$value,
         ties = function() private$..ties$value,
         showNotes = function() private$..showNotes$value,
         setSummary = function() private$..setSummary$value,
@@ -222,6 +246,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..factors = NA,
         ..blocks = NA,
         ..refLevels = NA,
+        ..covScales = NA,
         ..ties = NA,
         ..showNotes = NA,
         ..setSummary = NA,
@@ -491,7 +516,8 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                     "ties",
                                     "uniMulti",
                                     "trend",
-                                    "ciWidth"),
+                                    "ciWidth",
+                                    "covScales"),
                                 refs="gail1981",
                                 columns=list(
                                     list(
@@ -588,7 +614,8 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                     "refLevels",
                                     "ties",
                                     "uniMulti",
-                                    "ciWidth")))
+                                    "ciWidth",
+                                    "covScales")))
                             self$add(R6::R6Class(
                                 inherit = jmvcore::Group,
                                 active = list(
@@ -677,6 +704,10 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   to their order in the list
 #' @param refLevels a list of lists specifying reference levels of the
 #'   dependent variable and all the factors
+#' @param covScales a list of lists specifying, for each covariate, the unit
+#'   of its odds ratio: \code{'unit'} (default), \code{'sd'} (per one standard
+#'   deviation, on the rows of the model), \code{'ten'}, \code{'hundred'} or
+#'   \code{'thousand'} units
 #' @param ties \code{'exact'} (default), \code{'efron'} or \code{'breslow'};
 #'   the conditional likelihood, exact or approximated. All three are identical
 #'   with one case per matched set; the approximations are faster for sets with
@@ -741,6 +772,7 @@ condLogReg <- function(
     blocks = list(
                 list()),
     refLevels = NULL,
+    covScales = NULL,
     ties = "exact",
     showNotes = FALSE,
     setSummary = TRUE,
@@ -784,6 +816,7 @@ condLogReg <- function(
         factors = factors,
         blocks = blocks,
         refLevels = refLevels,
+        covScales = covScales,
         ties = ties,
         showNotes = showNotes,
         setSummary = setSummary,

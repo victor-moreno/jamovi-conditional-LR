@@ -233,6 +233,7 @@ items:
                 - uniMulti
                 - trend
                 - ciWidth
+                - covScales
             description: a table of model coefficients
             refs: gail1981
             columns:
@@ -331,6 +332,7 @@ items:
                 - ties
                 - uniMulti
                 - ciWidth
+                - covScales
 
           - name: assump
             title: Assumption Checks

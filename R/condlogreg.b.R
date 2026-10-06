@@ -81,6 +81,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .VIF = NULL,
         .levelsDep = NULL,
         .refLevels = NULL,
+        .scales = NULL,
         .uniFits = list(),
         .coefValues = list(),
         .blankCoef = list(or_u='', lower_u='', upper_u='', p_u='', ptrend_u='',
@@ -398,7 +399,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 termsB64 <- jmvcore::composeTerms(lapply(termsAll[[i]], jmvcore::toB64))
                 values <- list()
 
-                for (row in private$.coefLayout(i)) {
+                for (row in private$.coefLayout(i, withData=TRUE)) {
                     term <- termsAll[[i]][[row$term]]
                     main <- length(term) == 1
                     isFactor <- main && term %in% factors
@@ -454,8 +455,10 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     }
 
                     vals <- Filter(function(v) length(v) == 1 && ! is.na(v), vals)
-                    # '' rather than nothing: jamovi shows an unset number as '.'
-                    table$setRow(rowKey=row$key, values=utils::modifyList(private$.blankCoef, vals))
+                    # '' rather than nothing: jamovi shows an unset number as '.';
+                    # the level is rewritten for "per SD (value)"
+                    table$setRow(rowKey=row$key, values=c(
+                        utils::modifyList(private$.blankCoef, vals), list(level=row$level)))
                     values[[row$key]] <- vals
                 }
                 private$.coefValues[[i]] <- values
@@ -495,7 +498,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 get <- function(vals, name) if (is.null(vals[[name]])) NA_real_ else vals[[name]]
                 lines <- list()
                 shown <- character()
-                for (row in private$.coefLayout(i)) {
+                for (row in private$.coefLayout(i, withData=TRUE)) {
                     term <- termsAll[[i]][[row$term]]
                     header <- length(term) > 1 || term %in% self$options$factors
                     if (header && ! row$var %in% shown) {
@@ -506,7 +509,9 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     }
                     v <- values[[row$key]]
                     lines[[length(lines) + 1]] <- data.frame(
-                        label=if (header) paste0("    ", row$level) else row$var,
+                        label=if (header) paste0("    ", row$level)
+                              else if (private$.scaleOf(term) == 'unit') row$var
+                              else sprintf("%s (%s)", row$var, row$level),
                         ref=row$ref, or=if (row$ref) 1 else get(v, "or"),
                         lo=get(v, "lower"), hi=get(v, "upper"), p=get(v, "p"),
                         or_u=get(v, "or_u"), lo_u=get(v, "lower_u"), hi_u=get(v, "upper_u"))
@@ -570,7 +575,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 if (hasFactor)
                     .("Factors: OR against the reference level (OR = 1); on the reference row of a factor with three or more levels, p of the likelihood ratio test of the whole factor."),
                 if (hasCov)
-                    .("Covariates: OR per one-unit increase."),
+                    .("Covariates: OR per one-unit increase, or per the unit chosen in Covariate Scaling (SD of the rows of the model)."),
                 if (length(terms) > 1)
                     .("Multivariable ORs are adjusted for the other variables in the model."),
                 if (self$options$uniMulti)
@@ -586,7 +591,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         # reference level (OR 1) and one row per other level; for a covariate,
         # one row; for an interaction, one row per coefficient. `parts` are
         # the model-matrix names of the variables in a coefficient.
-        .coefLayout = function(i) {
+        .coefLayout = function(i, withData = FALSE) {
             terms <- private$.getModelTerms()[[i]]
             factors <- self$options$factors
             rows <- list()
@@ -602,15 +607,36 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 # first variable varies fastest, as expand.grid)
                 grid <- lapply(t, function(v) if (v %in% factors) private$.getLevels(v)$other else NA)
                 g <- expand.grid(grid, stringsAsFactors=FALSE)
+                # the unit of each scaled covariate in the term
+                units <- vapply(t[! isf], function(v) private$.scaleLabel(v, withData), '')
+                scaled <- units[vapply(t[! isf], function(v) private$.scaleOf(v) != 'unit', logical(1))]
                 for (r in seq_len(nrow(g))) {
                     lv <- unlist(g[r, ], use.names=FALSE)
                     parts <- ifelse(isf, paste0(jmvcore::toB64(t), jmvcore::toB64(lv)), jmvcore::toB64(t))
-                    level <- if (any(isf)) paste(lv[isf], collapse=" \u00d7 ") else .("per unit")
+                    level <- paste(c(lv[isf], scaled), collapse=" \u00d7 ")
+                    if ( ! nzchar(level))
+                        level <- .("per unit")
                     rows[[length(rows) + 1]] <- list(key=paste(parts, collapse=':'), term=j,
                                                      var=var, level=level, ref=FALSE, parts=parts)
                 }
             }
             rows
+        },
+        .scaleOf = function(cov) {
+            for (item in self$options$covScales)
+                if (identical(item$var, cov) && ! is.null(item$scale))
+                    return(item$scale)
+            'unit'
+        },
+        .scaleLabel = function(cov, withData = FALSE) {
+            switch(private$.scaleOf(cov),
+                unit=.("per unit"),
+                sd=if (withData && ! is.null(private$.scales[[cov]]))
+                       jmvcore::format(.("per SD ({sd})"), sd=format(signif(private$.scales[[cov]], 3)))
+                   else .("per 1 SD"),
+                ten=.("per 10 units"),
+                hundred=.("per 100 units"),
+                thousand=.("per 1000 units"))
         },
         # the coefficient whose model-matrix name holds the same parts (R may
         # order the variables of an interaction differently)
@@ -742,6 +768,21 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 data <- data[stats::complete.cases(data), , drop = FALSE]
 
             data[[".STRATA"]] <- factor(data[[".STRATA"]])
+
+            # Covariate Scaling: the OR per unit, per SD (of the rows of the
+            # model) or per 10, 100, 1000 units; the covariate is divided by
+            # that amount before fitting, as the prognosis module does
+            scales <- c()
+            for (cov in covs) {
+                x <- data[[jmvcore::toB64(cov)]]
+                s <- switch(private$.scaleOf(cov), unit=1, sd=stats::sd(x),
+                            ten=10, hundred=100, thousand=1000)
+                if (is.na(s) || s <= 0)
+                    s <- 1
+                data[[jmvcore::toB64(cov)]] <- x / s
+                scales[[cov]] <- s
+            }
+            private$.scales <- scales
 
             return(data)
         })

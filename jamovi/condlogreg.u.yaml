@@ -116,6 +116,31 @@ children:
               type: LevelSelector
               label: ''
   - type: CollapseBox
+    label: Covariate Scaling
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: ListBox
+        name: covScales
+        showColumnHeaders: true
+        fullRowSelect: true
+        stretchFactor: 1
+        height: large
+        columns:
+          - name: var
+            label: Covariate
+            selectable: false
+            stretchFactor: 1
+            maxWidth: 300
+            template:
+              type: VariableLabel
+          - name: scale
+            label: Odds ratio
+            selectable: false
+            stretchFactor: 0.5
+            template:
+              type: ComboBox
+  - type: CollapseBox
     label: Matching
     collapsed: true
     stretchFactor: 1

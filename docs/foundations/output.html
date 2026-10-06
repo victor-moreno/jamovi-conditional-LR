@@ -837,6 +837,7 @@ window.Quarto = {
 <li>there is no intercept row (see <a href="../foundations/method.html">the method</a>).</li>
 </ul>
 <p><strong>OR</strong> is the odds ratio of being a case (the non-reference level of the dependent variable) rather than a control, <strong>within the matched sets</strong>. Its confidence interval is a Wald interval, exponentiated (<span class="math inline">\(\exp(\hat\beta \pm z_{1-\alpha/2}\,\mathrm{SE})\)</span>, as <code>confint()</code> gives for <code>clogit</code>), at the level set in <em>Confidence interval</em> (95% by default), and <em>p</em> is the Wald test. On the reference row of a factor with three or more levels, <em>p</em> is the likelihood ratio test of the whole factor, the same as in the omnibus table.</p>
+<p><strong>Covariate Scaling</strong>, a box like <em>Reference Levels</em>, sets the unit of the odds ratio of each covariate: <em>per unit</em> (the default), <em>per 1 SD</em> (the standard deviation on the rows of the model, shown in the label), or <em>per 10</em>, <em>per 100</em> or <em>per 1000 units</em>. The covariate is divided by that amount before fitting, so the OR becomes <span class="math inline">\(\mathrm{OR}_{\text{unit}}^{\,c}\)</span> for a scale <span class="math inline">\(c\)</span>, with its interval scaled alike. The p-values, the likelihood ratio tests and the fit measures do not change. Univariable odds ratios, interactions and the forest plot use the same units.</p>
 <p>The options of <em>Model Coefficients</em>:</p>
 <ul>
 <li><strong>Univariable and multivariable</strong> adds the odds ratios of each variable alone (Univariable) beside those of the model (Multivariable). Both are estimated on the same rows, those complete for every variable of the model, so the difference between them is the adjustment alone.</li>
@@ -918,7 +919,7 @@ Figure&nbsp;1: The forest plot of model 2.
 </tr>
 </tbody>
 </table>
-<p class="jnote"><i>Note.</i> Odds ratios (OR) of "case = 1" vs. "case = 0" within the matched sets, with 95% confidence intervals. Factors: OR against the reference level (OR = 1); on the reference row of a factor with three or more levels, p of the likelihood ratio test of the whole factor. Covariates: OR per one-unit increase. Multivariable ORs are adjusted for the other variables in the model.</p>
+<p class="jnote"><i>Note.</i> Odds ratios (OR) of "case = 1" vs. "case = 0" within the matched sets, with 95% confidence intervals. Factors: OR against the reference level (OR = 1); on the reference row of a factor with three or more levels, p of the likelihood ratio test of the whole factor. Covariates: OR per one-unit increase, or per the unit chosen in Covariate Scaling (SD of the rows of the model). Multivariable ORs are adjusted for the other variables in the model.</p>
 </div>
 </div>
 <p>Warnings are shown whatever this option says: predictors that cannot be estimated (<em>Not estimable: …</em>), fitting problems, the number of uninformative matched sets, and reference levels not found.</p>

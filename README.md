@@ -50,6 +50,8 @@ Cox regression, rather than as in jmv:
   - **Log odds ratio, SE and Z** at the right;
   - **Forest plot** of each model, with univariable and multivariable estimates when both
     are shown;
+- **Covariate Scaling**, a list like *Reference Levels*: for each covariate, its OR per unit
+  (default), per 1 SD (of the rows of the model), or per 10, 100 or 1000 units;
 - **Show notes** (*Options*): the notes explaining each table are hidden by default;
   warnings (predictors that cannot be estimated, fitting problems, uninformative matched
   sets) are always shown.
@@ -146,6 +148,8 @@ FORT23/00032 and the Consortium for Biomedical Research in Epidemiology and Publ
 
 ## Versions
 
+- **0.4.0** — *Covariate Scaling*: the unit of the odds ratio of each covariate (per unit,
+  per 1 SD, per 10, 100 or 1000 units).
 - **0.3.0** — coefficient table as in the prognosis module (reference level OR = 1, level
   labels), univariable and multivariable odds ratios, trend test, forest plot, missing
   values in the descriptive table, *Show notes* option; replaces the jmv-style estimate
