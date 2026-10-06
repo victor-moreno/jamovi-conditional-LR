@@ -403,6 +403,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../usecases/bdendo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Endometrial Cancer and Oestrogens</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../usecases/nested.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">A Nested Case-Control Study</span></a>
   </div>
@@ -426,6 +432,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#matched-sets" id="toc-matched-sets" class="nav-link active" data-scroll-target="#matched-sets">Matched Sets</a></li>
+  <li><a href="#descriptives" id="toc-descriptives" class="nav-link" data-scroll-target="#descriptives">Descriptives</a></li>
   <li><a href="#model-fit-measures" id="toc-model-fit-measures" class="nav-link" data-scroll-target="#model-fit-measures">Model Fit Measures</a></li>
   <li><a href="#model-comparisons" id="toc-model-comparisons" class="nav-link" data-scroll-target="#model-comparisons">Model Comparisons</a></li>
   <li><a href="#omnibus-likelihood-ratio-tests" id="toc-omnibus-likelihood-ratio-tests" class="nav-link" data-scroll-target="#omnibus-likelihood-ratio-tests">Omnibus Likelihood Ratio Tests</a></li>
@@ -469,7 +476,7 @@ window.Quarto = {
 <caption>Matched Sets</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Cases</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Per set = Cases</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Controls</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Sets</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Observations</th>
@@ -499,6 +506,71 @@ window.Quarto = {
 <li>rows with 0 cases or 0 controls are <strong>uninformative sets</strong>. Usually missing values have removed every case or every control of the set. They do not enter the estimates, and the note gives how many sets are informative.</li>
 </ul>
 <p>The counts are taken after removing the rows with a missing value in any variable of the analysis, as the models are fitted.</p>
+</section>
+<section id="descriptives" class="level2">
+<h2 class="anchored" data-anchor-id="descriptives">Descriptives</h2>
+<p><em>Descriptives ▸ Descriptive table</em> (off by default).</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm jtab caption-top table-striped small">
+<caption>Descriptives</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">case = 0</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">case = 1</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">case</td>
+<td style="text-align: right;">n (%)</td>
+<td style="text-align: right;">165 (66.5%)</td>
+<td style="text-align: right;">83 (33.5%)</td>
+<td style="text-align: right;">248 (100.0%)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">induced</td>
+<td style="text-align: right;">Mean ± SD</td>
+<td style="text-align: right;">0.56 ± 0.73</td>
+<td style="text-align: right;">0.59 ± 0.75</td>
+<td style="text-align: right;">0.57 ± 0.74</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">113 (68.5%)</td>
+<td style="text-align: right;">28 (33.7%)</td>
+<td style="text-align: right;">141 (56.9%)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">40 (24.2%)</td>
+<td style="text-align: right;">31 (37.3%)</td>
+<td style="text-align: right;">71 (28.6%)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">spontaneous_f</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">12 (7.3%)</td>
+<td style="text-align: right;">24 (28.9%)</td>
+<td style="text-align: right;">36 (14.5%)</td>
+</tr>
+</tbody>
+</table>
+<p class="jnote"><i>Note.</i> Mean ± SD for covariates; n (%) for factor levels, with percentages within each column; for the dependent variable, of the total. N=248 observations with complete data on every variable of the analysis</p>
+</div>
+</div>
+<p>A first table for a paper, computed on the rows that enter the models:</p>
+<ul>
+<li>the <strong>dependent variable</strong>: the numbers of controls and cases, with their percentages of the total;</li>
+<li>each <strong>covariate</strong>: mean ± SD in controls, in cases and in total;</li>
+<li>each <strong>factor</strong>: n (%) for every level, with percentages within each column.</li>
+</ul>
+<p>Every variable in <strong>Covariates</strong> and <strong>Factors</strong> is included, whether or not it is in a model block. All these variables also define the complete rows, so a variable with many missing values reduces the table and the models alike.</p>
 </section>
 <section id="model-fit-measures" class="level2">
 <h2 class="anchored" data-anchor-id="model-fit-measures">Model Fit Measures</h2>
@@ -739,6 +811,54 @@ window.Quarto = {
 <li>Factors are coded against their <strong>reference level</strong>, which the <strong>Reference Levels</strong> box sets (default: the first level).</li>
 <li>There is no intercept row (see <a href="../foundations/method.html">the method</a>).</li>
 </ul>
+<p>With <strong>Odds ratios only</strong> ticked, the table keeps just the odds ratio, its confidence interval and p, in that order, which is the layout of most published tables. The <em>Odds ratio</em> and <em>Confidence interval</em> boxes are then not needed.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm jtab caption-top table-striped small">
+<caption>Model Coefficients - case</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Predictor</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Odds ratio</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Lower 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Upper 95% CI</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">induced</td>
+<td style="text-align: right;">4.076</td>
+<td style="text-align: right;">2.008</td>
+<td style="text-align: right;">8.274</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">spontaneous_f:</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1 – 0</td>
+<td style="text-align: right;">7.744</td>
+<td style="text-align: right;">3.200</td>
+<td style="text-align: right;">18.736</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2 – 0</td>
+<td style="text-align: right;">51.082</td>
+<td style="text-align: right;">12.362</td>
+<td style="text-align: right;">211.088</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+<p class="jnote"><i>Note.</i> Odds ratios of "case = 1" vs. "case = 0", conditional on the matched sets</p>
+</div>
+</div>
 </section>
 <section id="collinearity-statistics" class="level2">
 <h2 class="anchored" data-anchor-id="collinearity-statistics">Collinearity Statistics</h2>
@@ -792,6 +912,14 @@ window.Quarto = {
 <tr class="even">
 <td>—</td>
 <td><strong>Matching Variable</strong>, <strong>Likelihood</strong> option, <strong>Matched Sets</strong> table</td>
+</tr>
+<tr class="odd">
+<td>—</td>
+<td><strong>Descriptive table</strong> by case/control status</td>
+</tr>
+<tr class="even">
+<td>—</td>
+<td><strong>Odds ratios only</strong>: OR, CI and p, p last</td>
 </tr>
 <tr class="odd">
 <td>intercept</td>

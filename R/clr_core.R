@@ -207,3 +207,50 @@ clrSetComposition <- function(event, strata) {
     rownames(tab) <- NULL
     tab
 }
+
+# Descriptive table by case/control status. `event` is 1 for cases and 0 for
+# controls; `covs` and `factors` are named lists of the analysed columns (a
+# factor keeps its original level order). Returns one row per covariate and per
+# factor level, with formatted text: mean ± SD for covariates, n (%) for
+# factor levels with percentages within controls, cases and the total.
+clrDescriptives <- function(event, covs = list(), factors = list()) {
+    groups <- list(ctrl = event == 0, cases = event == 1, total = rep(TRUE, length(event)))
+    rows <- list()
+    for (name in names(covs)) {
+        x <- covs[[name]]
+        cells <- lapply(groups, function(g) clrMeanSD(x[g]))
+        rows[[length(rows) + 1]] <- data.frame(var = name, level = "", cells,
+                                               stringsAsFactors = FALSE)
+    }
+    for (name in names(factors)) {
+        x <- factors[[name]]
+        levs <- levels(x)
+        cells <- lapply(groups, function(g) {
+            n <- as.vector(table(factor(x[g], levels = levs)))
+            clrNPct(n, sum(g))
+        })
+        rows[[length(rows) + 1]] <- data.frame(var = name, level = levs, cells,
+                                               stringsAsFactors = FALSE)
+    }
+    if (length(rows) == 0)
+        return(data.frame(var = character(), level = character(), ctrl = character(),
+                          cases = character(), total = character()))
+    do.call(rbind, rows)
+}
+
+# Marginal frequencies of the dependent variable: controls, cases, total.
+clrDepFrequencies <- function(event) {
+    n <- c(ctrl = sum(event == 0), cases = sum(event == 1), total = length(event))
+    as.list(stats::setNames(clrNPct(n, length(event)), names(n)))
+}
+
+clrNPct <- function(n, total) {
+    sprintf("%d (%.1f%%)", as.integer(n), if (total > 0) 100 * n / total else NaN)
+}
+
+clrMeanSD <- function(x) {
+    m <- mean(x)
+    s <- stats::sd(x)
+    d <- if (is.finite(m) && max(abs(m), s, na.rm = TRUE) >= 100) 1 else 2
+    sprintf("%.*f \u00b1 %.*f", d, m, d, s)
+}

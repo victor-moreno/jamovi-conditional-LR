@@ -1,7 +1,7 @@
 ---
 title: Conditional Logistic Regression
 name: condLogReg
-version: 0.1.1
+version: 0.2.0
 jms: '1.0'
 authors:
   - V. Moreno
@@ -32,6 +32,16 @@ datasets:
     description: >-
       Matched case-control study (R datasets::infert): 83 sets of a case and up
       to 2 controls, matched on age, parity and education.
+  - name: Endometrial cancer and oestrogens (matched)
+    path: bdendo.csv
+    description: >-
+      Los Angeles study (Breslow & Day 1980; Epi::bdendo): 63 cases, 4 controls
+      each, matched on age, marital status and residence.
+  - name: Nested case-control study (simulated)
+    path: nested.csv
+    description: >-
+      SIMULATED: 200 cases with up to 4 controls matched on sex and age group;
+      smoking, coffee, activity. True ORs in the tutorial.
 usesNative: false
 minApp: 2.3.0
 

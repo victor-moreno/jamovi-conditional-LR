@@ -143,6 +143,16 @@ options:
             `TRUE` (default) or `FALSE`, provide a table of the composition
             (cases and controls) of the matched sets
 
+    - name: descTable
+      title: Descriptive table
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), provide a table of the covariates
+            (mean ± SD) and factors (n, %) in controls, cases and in total,
+            with the frequencies of the dependent variable
+
     - name: modelTest
       title: Overall model test
       type: Bool
@@ -254,6 +264,16 @@ options:
           R: >
             a number between 50 and 99.9 (default: 95) specifying the confidence
             interval width
+
+    - name: orTable
+      title: Odds ratios only
+      type: Bool
+      default: false
+      description:
+          R: >
+            `TRUE` or `FALSE` (default), show the model coefficients as odds
+            ratios, their confidence interval and p only, with p last
+            (replaces the estimate, SE and Z columns)
 
     - name: collin
       title: Collinearity statistics

@@ -100,6 +100,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             if (! is.null(self$options$dep))
                 private$.errorCheck()
 
+            private$.initDescTable()
             private$.initModelFitTable()
             private$.initModelCompTable()
             private$.initModelSpec()
@@ -114,6 +115,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             private$.errorCheck()
             private$.checkSets()
             private$.populateSetsTable()
+            private$.populateDescTable()
 
             if (self$nModels < 1 || length(self$options$blocks[[1]]) == 0)
                 return()
@@ -151,6 +153,45 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         },
 
         #### Init tables/plots functions ----
+        .initDescTable = function() {
+            if ( ! self$options$descTable)
+                return()
+
+            # added to jmv's logRegBin: covariates and factor levels by
+            # case/control status, plus the frequencies of the dependent
+            # variable; factor levels come from the data header, so all rows
+            # exist in .init()
+            table <- self$results$desc
+            dep <- self$options$dep
+
+            if ( ! is.null(dep)) {
+                depLevels <- private$.getLevelsDep()
+                table$getColumn('ctrl')$setTitle(depLevels$ref)
+                table$getColumn('cases')$setTitle(depLevels$other)
+                table$getColumn('ctrl')$setSuperTitle(dep)
+                table$getColumn('cases')$setSuperTitle(dep)
+                table$addRow(rowKey='.dep', values=list(var=dep, level=.('n (%)')))
+            }
+
+            # never an empty level cell: jamovi renders these columns as row
+            # headers and merges an empty one into the cell above, which
+            # shifts the rest of the row
+            for (cov in self$options$covs)
+                table$addRow(rowKey=paste0('.cov', cov), values=list(var=cov, level=.('Mean \u00b1 SD')))
+
+            for (factor in self$options$factors) {
+                levels <- levels(self$data[[factor]])
+                for (k in seq_along(levels)) {
+                    table$addRow(rowKey=paste0('.fac', factor, '.', k),
+                                 values=list(var=factor, level=levels[k]))
+                }
+            }
+
+            table$setNote(
+                "desc",
+                .("Mean \u00b1 SD for covariates; n (%) for factor levels, with percentages within each column; for the dependent variable, of the total.")
+            )
+        },
         .initModelFitTable = function() {
             table <- self$results$modelFit
 
@@ -209,8 +250,12 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 note <- paste0(.("Estimates represent the log odds of \u2026 within matched sets"))
             } else {
                 depLevels <- private$.getLevelsDep()
+                noteText <- if (self$options$orTable)
+                    .('Odds ratios of "{dep} = {level1}" vs. "{dep} = {level2}", conditional on the matched sets')
+                else
+                    .('Estimates represent the log odds of "{dep} = {level1}" vs. "{dep} = {level2}", conditional on the matched sets')
                 note <- jmvcore::format(
-                    .('Estimates represent the log odds of "{dep} = {level1}" vs. "{dep} = {level2}", conditional on the matched sets'),
+                    noteText,
                     dep = dep,
                     level1 = depLevels$other,
                     level2 = depLevels$ref
@@ -247,7 +292,8 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                         table$addRow(rowKey=terms[[j]],
                                      values=list(term = paste0(jmvcore::stringifyTerm(terms[[j]]), ':'),
                                                  est='', se='', odds='', z='', p='',
-                                                 lower='', upper='', oddsLower='', oddsUpper=''))
+                                                 lower='', upper='', oddsLower='', oddsUpper='',
+                                                 pOR=''))
 
                         contrastNames <- private$.contrastsCoefTable(terms[[j]])
 
@@ -306,6 +352,46 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 jmvcore::format(
                     .("{sets} matched sets, {inf} informative. Sets without a case or without a control do not contribute to the conditional likelihood."),
                     sets=sum(comp$nSets), inf=nInf
+                )
+            )
+        },
+        .populateDescTable = function() {
+            if ( ! self$options$descTable)
+                return()
+
+            table <- self$results$desc
+            data <- self$dataProcessed
+            # the analysed rows (complete for every variable), with the
+            # variables as the user coded them; convert whole columns before
+            # subsetting, which drops the "values" attribute toNumeric needs
+            # for a nominal integer column (it arrives as a factor)
+            rows <- match(rownames(data), rownames(self$data))
+
+            covs <- list()
+            for (cov in self$options$covs)
+                covs[[cov]] <- jmvcore::toNumeric(self$data[[cov]])[rows]
+            factors <- list()
+            for (factor in self$options$factors)
+                factors[[factor]] <- factor(self$data[[factor]], levels=levels(self$data[[factor]]))[rows]
+
+            table$setRow(rowKey='.dep', values=clrDepFrequencies(data$.EVENT))
+
+            desc <- clrDescriptives(data$.EVENT, covs, factors)
+            # paste0() of an empty vector is not empty: build keys per variable
+            keys <- c(
+                unname(vapply(names(covs), function(cov) paste0('.cov', cov), '')),
+                unlist(lapply(names(factors), function(f) paste0('.fac', f, '.', seq_along(levels(factors[[f]])))))
+            )
+            for (k in seq_along(keys)) {
+                table$setRow(rowKey=keys[k], values=list(
+                    ctrl=desc$ctrl[k], cases=desc$cases[k], total=desc$total[k]))
+            }
+
+            table$setNote(
+                "n",
+                jmvcore::format(
+                    .("N={n} observations with complete data on every variable of the analysis"),
+                    n=nrow(data)
                 )
             )
         },
@@ -419,6 +505,7 @@ condLogRegClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     row[["upper"]] <- CI[index, 2]
                     row[["oddsLower"]] <- CIOR[index, 1]
                     row[["oddsUpper"]] <- CIOR[index, 2]
+                    row[["pOR"]] <- coef$p[index]
 
                     table$setRow(rowKey=jmvcore::composeTerm(term), values = row)
                 }

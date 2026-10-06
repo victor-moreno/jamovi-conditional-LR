@@ -15,6 +15,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             refLevels = NULL,
             ties = "exact",
             setSummary = TRUE,
+            descTable = FALSE,
             modelTest = FALSE,
             dev = TRUE,
             aic = TRUE,
@@ -27,6 +28,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             OR = FALSE,
             ciOR = FALSE,
             ciWidthOR = 95,
+            orTable = FALSE,
             collin = FALSE, ...) {
 
             super$initialize(
@@ -103,6 +105,10 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "setSummary",
                 setSummary,
                 default=TRUE)
+            private$..descTable <- jmvcore::OptionBool$new(
+                "descTable",
+                descTable,
+                default=FALSE)
             private$..modelTest <- jmvcore::OptionBool$new(
                 "modelTest",
                 modelTest,
@@ -156,6 +162,10 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 min=50,
                 max=99.9,
                 default=95)
+            private$..orTable <- jmvcore::OptionBool$new(
+                "orTable",
+                orTable,
+                default=FALSE)
             private$..collin <- jmvcore::OptionBool$new(
                 "collin",
                 collin,
@@ -169,6 +179,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..refLevels)
             self$.addOption(private$..ties)
             self$.addOption(private$..setSummary)
+            self$.addOption(private$..descTable)
             self$.addOption(private$..modelTest)
             self$.addOption(private$..dev)
             self$.addOption(private$..aic)
@@ -180,6 +191,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..OR)
             self$.addOption(private$..ciOR)
             self$.addOption(private$..ciWidthOR)
+            self$.addOption(private$..orTable)
             self$.addOption(private$..collin)
         }),
     active = list(
@@ -191,6 +203,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         refLevels = function() private$..refLevels$value,
         ties = function() private$..ties$value,
         setSummary = function() private$..setSummary$value,
+        descTable = function() private$..descTable$value,
         modelTest = function() private$..modelTest$value,
         dev = function() private$..dev$value,
         aic = function() private$..aic$value,
@@ -202,6 +215,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         OR = function() private$..OR$value,
         ciOR = function() private$..ciOR$value,
         ciWidthOR = function() private$..ciWidthOR$value,
+        orTable = function() private$..orTable$value,
         collin = function() private$..collin$value),
     private = list(
         ..dep = NA,
@@ -212,6 +226,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..refLevels = NA,
         ..ties = NA,
         ..setSummary = NA,
+        ..descTable = NA,
         ..modelTest = NA,
         ..dev = NA,
         ..aic = NA,
@@ -223,6 +238,7 @@ condLogRegOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..OR = NA,
         ..ciOR = NA,
         ..ciWidthOR = NA,
+        ..orTable = NA,
         ..collin = NA)
 )
 
@@ -231,6 +247,7 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         sets = function() private$.items[["sets"]],
+        desc = function() private$.items[["desc"]],
         modelFit = function() private$.items[["modelFit"]],
         modelComp = function() private$.items[["modelComp"]],
         models = function() private$.items[["models"]]),
@@ -275,6 +292,39 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="nObs", 
                         `title`="Observations", 
                         `type`="integer"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="desc",
+                title="Descriptives",
+                visible="(descTable)",
+                clearWith=list(
+                    "dep",
+                    "strata",
+                    "covs",
+                    "factors",
+                    "refLevels"),
+                columns=list(
+                    list(
+                        `name`="var", 
+                        `title`="", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="level", 
+                        `title`="", 
+                        `type`="text"),
+                    list(
+                        `name`="ctrl", 
+                        `title`="Controls", 
+                        `type`="text"),
+                    list(
+                        `name`="cases", 
+                        `title`="Cases", 
+                        `type`="text"),
+                    list(
+                        `name`="total", 
+                        `title`="Total", 
+                        `type`="text"))))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="modelFit",
@@ -449,45 +499,55 @@ condLogRegResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                     list(
                                         `name`="est", 
                                         `title`="Estimate", 
-                                        `type`="number"),
+                                        `type`="number", 
+                                        `visible`="(orTable == FALSE)"),
                                     list(
                                         `name`="lower", 
                                         `title`="Lower", 
                                         `type`="number", 
-                                        `visible`="(ci)"),
+                                        `visible`="(ci && orTable == FALSE)"),
                                     list(
                                         `name`="upper", 
                                         `title`="Upper", 
                                         `type`="number", 
-                                        `visible`="(ci)"),
+                                        `visible`="(ci && orTable == FALSE)"),
                                     list(
                                         `name`="se", 
                                         `title`="SE", 
-                                        `type`="number"),
+                                        `type`="number", 
+                                        `visible`="(orTable == FALSE)"),
                                     list(
                                         `name`="z", 
                                         `title`="Z", 
-                                        `type`="number"),
+                                        `type`="number", 
+                                        `visible`="(orTable == FALSE)"),
                                     list(
                                         `name`="p", 
                                         `title`="p", 
                                         `type`="number", 
-                                        `format`="zto,pvalue"),
+                                        `format`="zto,pvalue", 
+                                        `visible`="(orTable == FALSE)"),
                                     list(
                                         `name`="odds", 
                                         `title`="Odds ratio", 
                                         `type`="number", 
-                                        `visible`="(OR)"),
+                                        `visible`="(orTable || OR)"),
                                     list(
                                         `name`="oddsLower", 
                                         `title`="Lower", 
                                         `type`="number", 
-                                        `visible`="(ciOR && OR)"),
+                                        `visible`="(orTable || (ciOR && OR))"),
                                     list(
                                         `name`="oddsUpper", 
                                         `title`="Upper", 
                                         `type`="number", 
-                                        `visible`="(ciOR && OR)"))))
+                                        `visible`="(orTable || (ciOR && OR))"),
+                                    list(
+                                        `name`="pOR", 
+                                        `title`="p", 
+                                        `type`="number", 
+                                        `format`="zto,pvalue", 
+                                        `visible`="(orTable)"))))
                             self$add(R6::R6Class(
                                 inherit = jmvcore::Group,
                                 active = list(
@@ -582,6 +642,9 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   many cases
 #' @param setSummary \code{TRUE} (default) or \code{FALSE}, provide a table of
 #'   the composition (cases and controls) of the matched sets
+#' @param descTable \code{TRUE} or \code{FALSE} (default), provide a table of
+#'   the covariates (mean ± SD) and factors (n, \%) in controls, cases and in
+#'   total, with the frequencies of the dependent variable
 #' @param modelTest \code{TRUE} or \code{FALSE} (default), provide the model
 #'   comparison between the models and the NULL model
 #' @param dev \code{TRUE} (default) or \code{FALSE}, provide the deviance (-2
@@ -605,11 +668,15 @@ condLogRegBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   interval for the model coefficient odds ratio estimates
 #' @param ciWidthOR a number between 50 and 99.9 (default: 95) specifying the
 #'   confidence interval width
+#' @param orTable \code{TRUE} or \code{FALSE} (default), show the model
+#'   coefficients as odds ratios, their confidence interval and p only, with p
+#'   last (replaces the estimate, SE and Z columns)
 #' @param collin \code{TRUE} or \code{FALSE} (default), provide VIF and
 #'   tolerance collinearity statistics
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$sets} \tab \tab \tab \tab \tab a table of the composition of the matched sets \cr
+#'   \code{results$desc} \tab \tab \tab \tab \tab a table of the covariates (mean ± SD) and factors (n, \%) by the levels of the dependent variable \cr
 #'   \code{results$modelFit} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$modelComp} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$models} \tab \tab \tab \tab \tab an array of model specific results \cr
@@ -633,6 +700,7 @@ condLogReg <- function(
     refLevels = NULL,
     ties = "exact",
     setSummary = TRUE,
+    descTable = FALSE,
     modelTest = FALSE,
     dev = TRUE,
     aic = TRUE,
@@ -645,6 +713,7 @@ condLogReg <- function(
     OR = FALSE,
     ciOR = FALSE,
     ciWidthOR = 95,
+    orTable = FALSE,
     collin = FALSE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -674,6 +743,7 @@ condLogReg <- function(
         refLevels = refLevels,
         ties = ties,
         setSummary = setSummary,
+        descTable = descTable,
         modelTest = modelTest,
         dev = dev,
         aic = aic,
@@ -685,6 +755,7 @@ condLogReg <- function(
         OR = OR,
         ciOR = ciOR,
         ciWidthOR = ciWidthOR,
+        orTable = orTable,
         collin = collin)
 
     analysis <- condLogRegClass$new(

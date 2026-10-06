@@ -125,8 +125,18 @@ children:
         children:
           - type: ComboBox
             name: ties
+  - type: CollapseBox
+    label: Descriptives
+    collapsed: true
+    stretchFactor: 1
+    children:
+      - type: LayoutBox
+        margin: large
+        children:
           - type: CheckBox
             name: setSummary
+          - type: CheckBox
+            name: descTable
   - type: CollapseBox
     label: Assumption Checks
     collapsed: true
@@ -238,3 +248,5 @@ children:
                         suffix: '%'
                         format: number
                         enable: (ciOR)
+                  - type: CheckBox
+                    name: orTable

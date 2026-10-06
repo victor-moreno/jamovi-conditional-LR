@@ -31,7 +31,12 @@ Added:
   controls per set), with the uninformative sets (no case or no control left after removing
   missing values) counted in a note;
 - **Likelihood**: the exact conditional likelihood (default), or Efron's or Breslow's
-  approximation for sets with many cases. All three agree when each set has one case.
+  approximation for sets with many cases. All three agree when each set has one case;
+- a **Descriptive table** (*Descriptives* box): the frequencies of the dependent variable,
+  mean ± SD of each covariate and n (%) of each factor level, in controls, cases and in
+  total, for the rows that enter the models;
+- **Odds ratios only** (*Model Coefficients*): the coefficient table reduced to the odds
+  ratio, its confidence interval and p, p last, as in a published table.
 
 Removed, because a conditional model has no intercept and so gives no absolute
 probabilities: Tjur's R², estimated marginal means, the prediction section (classification
@@ -50,16 +55,25 @@ sets, or collinear with others after removing the set means) before fitting, bec
 `coxph`'s own check depends on rounding: on Linux it estimated a matching variable entered
 alone as a meaningless coefficient.
 
-The module ships the data set **Infertility after abortion** (R's `datasets::infert`), a
-1:2 matched case-control study, in jamovi's Data Library.
+Three data sets ship with the module, in jamovi's Data Library:
+
+- **Infertility after abortion** (R's `datasets::infert`, Trichopoulos et al. 1976): 83 sets
+  of a case and up to two controls;
+- **Endometrial cancer and oestrogens** (Breslow & Day 1980, as `Epi::bdendo`): 63 sets of a
+  case and four controls, with oestrogen use, its duration and dose, gallbladder disease,
+  hypertension, obesity and other drugs;
+- **Nested case-control study (simulated)**: 200 cases with up to four controls, smoking
+  confounding the effect of coffee, missing values; its true odds ratios are given in the
+  tutorial.
 
 ## Tutorial
 
 A [website on conditional logistic regression](https://victor-moreno.github.io/jamovi-conditional-LR/)
 (in `docs/`) covers why matched data need a conditional analysis (with a simulation of the
 alternatives), how every number in the output is computed, and two use cases worked step by
-step in jamovi, with their data: the `infert` study, and a simulated 1:4 nested case-control
-study with confounding, a variable matching ratio and missing values. Every table in it is
+step in jamovi, with their data: the `infert` study, the endometrial cancer study, and a
+simulated 1:4 nested case-control study with confounding, a variable matching ratio and
+missing values. Every table in it is
 computed by this module. The site is rendered with Quarto from a source kept outside this
 repository.
 
@@ -99,7 +113,9 @@ serialisation of the results as jamovi sends them.
 The analysis is a clone of `logRegBin` from [jmv](https://github.com/jamovi/jmv), by Ravi
 Selker, Jonathon Love and Damian Dropmann (GPL ≥ 2). The panel, its JavaScript and most of the
 R backend are theirs. Model fitting relies on [survival](https://github.com/therneau/survival)
-(T. M. Therneau).
+(T. M. Therneau). The endometrial cancer data are Breslow & Day's, as distributed in the R
+package [Epi](https://cran.r-project.org/package=Epi) (B. Carstensen, M. Plummer, E. Laara,
+M. Hills; GPL-2).
 
 This module was designed and built together with Claude Code.
 
@@ -114,6 +130,8 @@ FORT23/00032 and the Consortium for Biomedical Research in Epidemiology and Publ
 
 ## Versions
 
+- **0.2.0** — descriptive table, odds-ratios-only coefficient table, and two more data sets
+  (endometrial cancer, simulated nested study).
 - **0.1.1** — aliased predictors (e.g. a matching variable) are detected by the module, so
   they are reported the same on every platform; the note names them.
 - **0.1.0** — first version.

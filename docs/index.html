@@ -373,6 +373,12 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./usecases/bdendo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Endometrial Cancer and Oestrogens</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./usecases/nested.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">A Nested Case-Control Study</span></a>
   </div>
@@ -460,7 +466,12 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p>The rest of the panel is the one jmv users know: <strong>Model Builder</strong> (blocks of predictors, interactions), <strong>Reference Levels</strong>, <strong>Matching</strong> (the likelihood and the matched-set table), <strong>Assumption Checks</strong> (collinearity), <strong>Model Fit</strong> (deviance, AIC, BIC, pseudo R², overall test) and <strong>Model Coefficients</strong> (omnibus likelihood ratio tests, estimates and odds ratios with confidence intervals).</p>
+<p>The rest of the panel is the one jmv users know: <strong>Model Builder</strong> (blocks of predictors, interactions), <strong>Reference Levels</strong>, <strong>Assumption Checks</strong> (collinearity), <strong>Model Fit</strong> (deviance, AIC, BIC, pseudo R², overall test) and <strong>Model Coefficients</strong> (omnibus likelihood ratio tests, estimates and odds ratios with confidence intervals). Three parts are new:</p>
+<ul>
+<li><strong>Matching</strong>: the conditional likelihood, exact or approximate;</li>
+<li><strong>Descriptives</strong>: the matched-set table, and a descriptive table of every variable by case/control status;</li>
+<li><strong>Odds ratios only</strong>, in <em>Model Coefficients</em>: the odds ratio, its confidence interval and p, p last, as in a published table.</li>
+</ul>
 <p>A first result, with the module’s bundled data set (<em>Infertility after abortion</em>, R’s <code>infert</code>): 248 women in 83 matched sets, each infertile case matched with up to two fertile controls on age, parity and education <span class="citation" data-cites="trichopoulos1976">(<a href="#ref-trichopoulos1976" role="doc-biblioref">Trichopoulos et al. 1976</a>)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -468,7 +479,7 @@ div.csl-indent {
 <caption>Matched Sets</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Cases</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Per set = Cases</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Controls</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Sets</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Observations</th>
@@ -539,7 +550,7 @@ div.csl-indent {
 <ul>
 <li><a href="./foundations/method.html"><strong>Method</strong></a>: why matched data need a conditional analysis, the conditional likelihood, its equivalence with a stratified Cox model, and what can and cannot be estimated.</li>
 <li><a href="./foundations/output.html"><strong>Reading the output</strong></a>: every table and option of the analysis, how each number is computed, and what changed from jmv’s logistic regression.</li>
-<li><a href="./usecases/index.html"><strong>Use cases in jamovi</strong></a>: two studies analysed step by step, with their data to download.</li>
+<li><a href="./usecases/index.html"><strong>Use cases in jamovi</strong></a>: three studies analysed step by step, with their data to download. Two of them ship with the module in jamovi’s Data Library, with a third, simulated one.</li>
 </ul>
 </section>
 <section id="install" class="level2">

@@ -39,6 +39,39 @@ items:
           title: Observations
           type: integer
 
+    - name: desc
+      title: Descriptives
+      type: Table
+      description: a table of the covariates (mean ± SD) and factors (n, %) by the levels of the dependent variable
+      visible: (descTable)
+      clearWith:
+        - dep
+        - strata
+        - covs
+        - factors
+        - refLevels
+      columns:
+        - name: var
+          title: ''
+          type: text
+          combineBelow: true
+
+        - name: level
+          title: ''
+          type: text
+
+        - name: ctrl
+          title: Controls
+          type: text
+
+        - name: cases
+          title: Cases
+          type: text
+
+        - name: total
+          title: Total
+          type: text
+
     - name: modelFit
       title: Model Fit Measures
       type: Table
@@ -208,44 +241,55 @@ items:
               - name: est
                 title: Estimate
                 type: number
+                visible: (orTable == FALSE)
 
               - name: lower
                 title: Lower
                 type: number
-                visible: (ci)
+                visible: (ci && orTable == FALSE)
 
               - name: upper
                 title: Upper
                 type: number
-                visible: (ci)
+                visible: (ci && orTable == FALSE)
 
               - name: se
                 title: SE
                 type: number
+                visible: (orTable == FALSE)
 
               - name: z
                 title: Z
                 type: number
+                visible: (orTable == FALSE)
 
               - name: p
                 title: p
                 type: number
                 format: zto,pvalue
+                visible: (orTable == FALSE)
 
               - name: odds
                 title: Odds ratio
                 type: number
-                visible: (OR)
+                visible: (orTable || OR)
 
               - name: oddsLower
                 title: Lower
                 type: number
-                visible: (ciOR && OR)
+                visible: (orTable || (ciOR && OR))
 
               - name: oddsUpper
                 title: Upper
                 type: number
-                visible: (ciOR && OR)
+                visible: (orTable || (ciOR && OR))
+
+              # with orTable, p moves after the odds ratio and its interval
+              - name: pOR
+                title: p
+                type: number
+                format: zto,pvalue
+                visible: (orTable)
 
           - name: assump
             title: Assumption Checks
